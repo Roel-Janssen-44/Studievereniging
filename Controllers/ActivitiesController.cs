@@ -303,5 +303,48 @@ namespace Studievereniging.Controllers
 
             return RedirectToAction(nameof(Details), new { id = activity.Id });
         }
+
+        // GET: Activities/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var activity = await _context.Activities
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            return View(activity);
+        }
+
+        // POST: Activities/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var activity = await _context.Activities
+                .Include(a => a.Participants)
+                .Include(a => a.Organisers)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            // Clear relationships first
+            activity.Participants.Clear();
+            activity.Organisers.Clear();
+            
+            _context.Activities.Remove(activity);
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

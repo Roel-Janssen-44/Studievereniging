@@ -143,12 +143,15 @@
                             </form>
                         }
 
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
-                            <i class="bi bi-pencil"></i> Edit Activity
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
-                            <i class="bi bi-trash"></i> Delete Activity
-                        </a>
+                        <div class="btn-group w-100">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-secondary">
+                                <i class="bi bi-pencil"></i> Edit Activity
+                            </a>
+                            <button type="button" class="btn btn-outline-danger" 
+                                    onclick="confirmDelete(@Model.Id, '@Model.Name')">
+                                <i class="bi bi-trash"></i> Delete Activity
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -173,3 +176,35 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bevestig Verwijdering</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Weet je zeker dat je <span id="deleteActivityName" class="fw-bold"></span> wilt verwijderen?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                <form id="deleteForm" asp-action="Delete" method="post">
+                    <input type="hidden" name="id" id="deleteActivityId" />
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">Verwijderen</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, name) {
+            document.getElementById('deleteActivityId').value = id;
+            document.getElementById('deleteActivityName').textContent = name;
+            new bootstrap.Modal(document.getElementById('deleteModal')).show();
+        }
+    </script>
+}
