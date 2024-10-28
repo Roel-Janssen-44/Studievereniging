@@ -22,7 +22,7 @@ namespace Studievereniging.Models
         public string? Category { get; set; }
         public DateTime? Calendar { get; set; }
         public string? Image { get; set; }
-        public bool? IsPublic { get; set; }
+        public bool IsPublic { get; set; } = true;  // Changed from bool? to bool with default value
 
         [AllowNull]
         public int? AdminId { get; set; }

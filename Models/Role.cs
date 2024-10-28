@@ -12,3 +12,4 @@ namespace Studievereniging.Models
         public const string BoardMember = "BoardMember";
     }
 }
+ 
