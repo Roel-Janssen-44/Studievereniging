@@ -8,6 +8,13 @@ namespace Studievereniging
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // This ensures the Development settings override the base settings
+            builder.Configuration
+                .SetBasePath(builder.Environment.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+
             builder.Services.AddDbContext<ApplicationData>();
 
             // Add services to the container.
