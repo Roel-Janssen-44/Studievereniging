@@ -36,6 +36,7 @@ namespace Studievereniging.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.user)
+                .Include(o => o.OrderLines).ThenInclude(ol => ol.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -45,10 +46,22 @@ namespace Studievereniging.Controllers
             return View(order);
         }
 
-        // GET: Orders/Create
+        //// GET: Orders/Create
+        //public IActionResult Create()
+        //{
+        //    ViewData["CustomerId"] = new SelectList(_context.Users, "Id", "Id");
+        //    return View();
+        //}
         public IActionResult Create()
         {
-            ViewData["CustomerId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewBag.CustomerId = _context.Users
+                .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
+                .ToList();
+
+            ViewBag.ProductId = _context.Products
+                .Select(p => new SelectListItem { Value = p.Id.ToString(), Text = p.Name })
+                .ToList();
+
             return View();
         }
 
@@ -57,15 +70,18 @@ namespace Studievereniging.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateTime,CustomerId")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,DateTime,CustomerId,OrderLines")] Order order)
         {
             if (ModelState.IsValid)
             {
+
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CustomerId"] = new SelectList(_context.Users, "Id", "Id", order.CustomerId);
+
+            ViewBag.CustomerId = new SelectList(_context.Users, "Id", "Name", order.CustomerId);
+            ViewBag.ProductId = new SelectList(_context.Products, "Id", "Name");
             return View(order);
         }
 
