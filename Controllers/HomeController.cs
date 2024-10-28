@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Studievereniging.Controllers
 {
@@ -49,6 +51,15 @@ namespace Studievereniging.Controllers
                 .ToListAsync();
 
             return Json(activities);
+        }
+
+        // Nieuwe contact actie
+        public IActionResult Contact()
+        {
+            // Je kunt eventueel ViewBag gebruiken voor extra gegevens op de pagina
+            ViewBag.Message = "Neem contact met ons op voor meer informatie.";
+
+            return View();
         }
     }
 }
