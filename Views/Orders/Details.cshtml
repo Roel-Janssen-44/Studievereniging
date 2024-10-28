@@ -6,24 +6,53 @@
 
 <h1>Details</h1>
 
-<div>
+<div class="contianer">
     <h4>Order</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.DateTime)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.DateTime)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.user)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.user.Id)
         </dd>
     </dl>
+
+    <h4>Order Lines</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.OrderLines != null)
+            {
+                foreach (var orderLine in Model.OrderLines)
+                {
+                    <tr>
+                        <td>@orderLine.Product?.Name</td>
+                        <td>@orderLine.Amount</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2">No order lines available.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>

@@ -8,25 +8,47 @@
 
 <h4>Order</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DateTime" class="control-label"></label>
-                <input asp-for="DateTime" class="form-control" />
-                <span asp-validation-for="DateTime" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
-                <select asp-for="CustomerId" class ="form-control" asp-items="ViewBag.CustomerId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+<form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <!-- Order DateTime -->
+    <div class="form-group">
+        <label asp-for="DateTime" class="control-label"></label>
+        <input asp-for="DateTime" class="form-control" />
+        <span asp-validation-for="DateTime" class="text-danger"></span>
     </div>
-</div>
+
+    <!-- Customer Selection -->
+    <div class="form-group">
+        <label asp-for="CustomerId" class="control-label"></label>
+        <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
+    </div>
+
+    <!-- OrderLines Section -->
+    <h4>Order Lines</h4>
+    <div id="orderLines">
+        <!-- Template for an OrderLine -->
+        <div class="order-line-template form-group">
+            <div class="form-group">
+                <label>Product</label>
+                <select name="OrderLines[0].ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+            </div>
+            <div class="form-group">
+                <label>Amount</label>
+                <input name="OrderLines[0].Amount" class="form-control" />
+            </div>
+            <button type="button" class="btn btn-danger remove-order-line">Remove</button>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-secondary" id="addOrderLine">Add Order Line</button>
+    <br /><br />
+
+    <div class="form-group">
+        <input type="submit" value="Create" class="btn btn-primary" />
+    </div>
+</form>
+
 
 <div>
     <a asp-action="Index">Back to List</a>
@@ -35,3 +57,24 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    document.getElementById('addOrderLine').addEventListener('click', function() {
+        const orderLinesDiv = document.getElementById('orderLines');
+        const orderLineTemplate = document.querySelector('.order-line-template').cloneNode(true);
+        const index = orderLinesDiv.children.length;
+
+        orderLineTemplate.querySelectorAll('select, input').forEach(function(input) {
+            input.name = input.name.replace('[0]', `[${index}]`);
+        });
+
+        orderLineTemplate.classList.remove('order-line-template');
+        orderLinesDiv.appendChild(orderLineTemplate);
+    });
+
+    document.getElementById('orderLines').addEventListener('click', function(event) {
+        if (event.target.classList.contains('remove-order-line')) {
+            event.target.closest('.order-line-template').remove();
+        }
+    });
+</script>
