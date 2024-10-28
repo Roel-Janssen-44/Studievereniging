@@ -193,3 +193,128 @@ body {
 .nav-link.active::after {
     width: 100%;
 }
+
+/* Add these styles to your existing site.css */
+
+/* Common page styles */
+.page-header {
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+    border-radius: 1rem;
+}
+
+/* Form styles */
+.form-control:focus {
+    border-color: #1a237e;
+    box-shadow: 0 0 0 0.2rem rgba(26,35,126,0.25);
+}
+
+.form-select:focus {
+    border-color: #1a237e;
+    box-shadow: 0 0 0 0.2rem rgba(26,35,126,0.25);
+}
+
+/* Card animations */
+.animate-card {
+    animation: fadeInUp 0.6s ease-out;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.animate-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+}
+
+/* Button styles */
+.btn-primary {
+    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+    border: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
+}
+
+/* Badge styles */
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
+/* Table styles */
+.table-hover tbody tr:hover {
+    background: linear-gradient(135deg, rgba(26,35,126,0.05) 0%, rgba(13,71,161,0.05) 100%);
+}
+
+/* Breadcrumb styles */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #1a237e;
+}
+
+.breadcrumb-item a {
+    color: #1a237e;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #0d47a1;
+}
+
+/* Alert styles */
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+/* Select2 customization */
+.select2-container--bootstrap-5 .select2-selection {
+    border-color: #dee2e6;
+}
+
+.select2-container--bootstrap-5 .select2-selection:focus {
+    border-color: #1a237e;
+    box-shadow: 0 0 0 0.2rem rgba(26,35,126,0.25);
+}
+
+/* Loading animation */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.loading {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+    background-size: 1000px 100%;
+}
+
+/* Empty state styles */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 1rem;
+    margin: 2rem 0;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}

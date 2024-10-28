@@ -1,17 +1,29 @@
 @model Studievereniging.Models.ViewModels.ActivityViewModel
 
 @{
-    ViewData["Title"] = "Create Activity";
+    ViewData["Title"] = "Nieuwe Activiteit - Invictus";
 }
 
-<div class="container py-4">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-action="Index">Activities</a></li>
-            <li class="breadcrumb-item active">Create New Activity</li>
-        </ol>
-    </nav>
+<div class="hero rounded-5 mb-4">
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-3">
+                        <li class="breadcrumb-item"><a class="text-white" asp-action="Index">Activiteiten</a></li>
+                        <li class="breadcrumb-item active text-white" aria-current="page">Nieuwe Activiteit</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">Nieuwe Activiteit Aanmaken</h1>
+                <p class="lead mb-0">
+                    Maak een nieuwe activiteit aan voor de leden van Invictus.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
 
+<div class="container pb-5">
     <form asp-action="Create" method="post">
         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
         
@@ -21,10 +33,10 @@
             <div class="col-md-8">
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-lg"></i> Create Activity
+                        <i class="bi bi-check-lg"></i> Activiteit Aanmaken
                     </button>
                     <a asp-action="Index" class="btn btn-outline-secondary">
-                        <i class="bi bi-x-lg"></i> Cancel
+                        <i class="bi bi-x-lg"></i> Annuleren
                     </a>
                 </div>
             </div>

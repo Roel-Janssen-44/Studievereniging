@@ -2,25 +2,27 @@
 
 <div class="row">
     <div class="col-md-8">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm animate-card">
             <div class="card-body">
+                <h5 class="card-title mb-4">Activiteit Details</h5>
+                
                 <div class="mb-3">
-                    <label asp-for="Name" class="form-label"></label>
-                    <input asp-for="Name" class="form-control" />
+                    <label asp-for="Name" class="form-label">Naam</label>
+                    <input asp-for="Name" class="form-control" placeholder="Voer de naam van de activiteit in" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label asp-for="StartDate" class="form-label"></label>
+                            <label asp-for="StartDate" class="form-label">Start Datum & Tijd</label>
                             <input asp-for="StartDate" class="form-control" type="datetime-local" />
                             <span asp-validation-for="StartDate" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label asp-for="EndDate" class="form-label"></label>
+                            <label asp-for="EndDate" class="form-label">Eind Datum & Tijd</label>
                             <input asp-for="EndDate" class="form-control" type="datetime-local" />
                             <span asp-validation-for="EndDate" class="text-danger"></span>
                         </div>
@@ -28,50 +30,55 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Location" class="form-label"></label>
-                    <input asp-for="Location" class="form-control" />
+                    <label asp-for="Location" class="form-label">Locatie</label>
+                    <input asp-for="Location" class="form-control" placeholder="Voer de locatie in" />
                     <span asp-validation-for="Location" class="text-danger"></span>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label asp-for="MaxParticipants" class="form-label"></label>
-                            <input asp-for="MaxParticipants" class="form-control" type="number" />
+                            <label asp-for="MaxParticipants" class="form-label">Maximum Aantal Deelnemers</label>
+                            <input asp-for="MaxParticipants" class="form-control" type="number" min="1" />
                             <span asp-validation-for="MaxParticipants" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label asp-for="Price" class="form-label"></label>
-                            <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                            <label asp-for="Price" class="form-label">Prijs (€)</label>
+                            <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" />
                             <span asp-validation-for="Price" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="RegistrationDeadline" class="form-label"></label>
+                    <label asp-for="RegistrationDeadline" class="form-label">Inschrijf Deadline</label>
                     <input asp-for="RegistrationDeadline" class="form-control" type="datetime-local" />
                     <span asp-validation-for="RegistrationDeadline" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Category" class="form-label"></label>
-                    <input asp-for="Category" class="form-control" />
+                    <label asp-for="Category" class="form-label">Categorie</label>
+                    <select asp-for="Category" class="form-select">
+                        <option value="">Selecteer een categorie</option>
+                        <option value="sociaal">Sociaal</option>
+                        <option value="studie">Studie</option>
+                        <option value="sport">Sport</option>
+                    </select>
                     <span asp-validation-for="Category" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Image" class="form-label"></label>
-                    <input asp-for="Image" class="form-control" type="url" />
+                    <label asp-for="Image" class="form-label">Afbeelding URL</label>
+                    <input asp-for="Image" class="form-control" type="url" placeholder="https://..." />
                     <span asp-validation-for="Image" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">
-                    <div class="form-check">
+                    <div class="form-check form-switch">
                         <input asp-for="IsPublic" class="form-check-input" type="checkbox" />
-                        <label asp-for="IsPublic" class="form-check-label"></label>
+                        <label asp-for="IsPublic" class="form-check-label">Openbaar Zichtbaar</label>
                     </div>
                 </div>
             </div>
@@ -79,9 +86,9 @@
     </div>
 
     <div class="col-md-4">
-        <div class="card shadow-sm">
+        <div class="card shadow-sm animate-card">
             <div class="card-body">
-                <h5 class="card-title">Organizers</h5>
+                <h5 class="card-title mb-3">Organisatoren</h5>
                 <div class="mb-3">
                     <select id="organizerSelect" name="SelectedOrganizerIds" class="form-select" multiple>
                         @foreach (var organizer in Model.AvailableOrganizers)
@@ -96,6 +103,10 @@
                             }
                         }
                     </select>
+                    <small class="text-muted d-block mt-2">
+                        <i class="bi bi-info-circle"></i> 
+                        Selecteer één of meerdere organisatoren voor deze activiteit
+                    </small>
                 </div>
             </div>
         </div>
@@ -106,23 +117,9 @@
     <script>
         $(document).ready(function() {
             $('#organizerSelect').select2({
-                placeholder: 'Select organizers',
+                placeholder: 'Selecteer organisatoren',
                 allowClear: true,
                 theme: 'bootstrap-5'
-            });
-
-            $('#organizerSelect').on('change', function() {
-                // Clear existing hidden inputs
-                $('input[name="SelectedOrganizerIds"]').remove();
-                
-                // Add new hidden inputs for selected values
-                $(this).val().forEach(function(value) {
-                    $('<input>').attr({
-                        type: 'hidden',
-                        name: 'SelectedOrganizerIds',
-                        value: value
-                    }).appendTo('form');
-                });
             });
         });
     </script>
