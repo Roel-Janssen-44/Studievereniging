@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
-using Studievereniging.ViewModels;
+
 namespace Studievereniging.Controllers
 {
     public class ActivitiesController : Controller
@@ -22,27 +22,8 @@ namespace Studievereniging.Controllers
         // GET: Activities
         public async Task<IActionResult> Index()
         {
-            var activities = await _context.Activities
-                .Include(a => a.Admin)
-                .Include(a => a.Participants)
-                .Select(a => new ActivityViewModel
-                {
-                    Id = a.Id,
-                    Name = a.Name,
-                    Location = a.Location,
-                    StartDate = a.StartDate,
-                    EndDate = a.EndDate,
-                    Category = a.Category,
-                    Price = a.Price,
-                    MaxParticipants = a.MaxParticipants,
-                    CurrentParticipants = a.Participants.Count,
-                    AdminName = a.Admin != null ? a.Admin.Name : "Unknown",
-                    ImageUrl = a.Image
-                })
-                .OrderBy(a => a.StartDate)
-                .ToListAsync();
-
-            return View(activities);
+            var applicationData = _context.Activities.Include(a => a.Admin);
+            return View(await applicationData.ToListAsync());
         }
 
         // GET: Activities/Details/5
@@ -67,8 +48,7 @@ namespace Studievereniging.Controllers
         // GET: Activities/Create
         public IActionResult Create()
         {
-            // Change from Discriminator to Name for the display text
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name");
+            ViewData["AdminId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -85,8 +65,7 @@ namespace Studievereniging.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            // Also update here to use Name instead of Discriminator
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name", activity.AdminId);
+            ViewData["AdminId"] = new SelectList(_context.Users, "Id", "Id", activity.AdminId);
             return View(activity);
         }
 
@@ -103,8 +82,7 @@ namespace Studievereniging.Controllers
             {
                 return NotFound();
             }
-            // Update here as well
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name", activity.AdminId);
+            ViewData["AdminId"] = new SelectList(_context.Users, "Id", "Id", activity.AdminId);
             return View(activity);
         }
 
@@ -140,8 +118,7 @@ namespace Studievereniging.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            // Update here as well
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name", activity.AdminId);
+            ViewData["AdminId"] = new SelectList(_context.Users, "Id", "Id", activity.AdminId);
             return View(activity);
         }
 

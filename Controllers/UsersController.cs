@@ -10,22 +10,22 @@ using Studievereniging.Models;
 
 namespace Studievereniging.Controllers
 {
-    public class GuestsController : Controller
+    public class UsersController : Controller
     {
         private readonly ApplicationData _context;
 
-        public GuestsController(ApplicationData context)
+        public UsersController(ApplicationData context)
         {
             _context = context;
         }
 
-        // GET: Guests
+        // GET: Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Guests.ToListAsync());
+            return View(await _context.Users.ToListAsync());
         }
 
-        // GET: Guests/Details/5
+        // GET: Users/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -33,39 +33,39 @@ namespace Studievereniging.Controllers
                 return NotFound();
             }
 
-            var guest = await _context.Guests
+            var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (guest == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(guest);
+            return View(user);
         }
 
-        // GET: Guests/Create
+        // GET: Users/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Guests/Create
+        // POST: Users/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Guest guest)
+        public async Task<IActionResult> Create([Bind("Id,Name,Role")] User user)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(guest);
+                _context.Add(user);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(guest);
+            return View(user);
         }
 
-        // GET: Guests/Edit/5
+        // GET: Users/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -73,22 +73,22 @@ namespace Studievereniging.Controllers
                 return NotFound();
             }
 
-            var guest = await _context.Guests.FindAsync(id);
-            if (guest == null)
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
             {
                 return NotFound();
             }
-            return View(guest);
+            return View(user);
         }
 
-        // POST: Guests/Edit/5
+        // POST: Users/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name")] Guest guest)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Role")] User user)
         {
-            if (id != guest.Id)
+            if (id != user.Id)
             {
                 return NotFound();
             }
@@ -97,12 +97,12 @@ namespace Studievereniging.Controllers
             {
                 try
                 {
-                    _context.Update(guest);
+                    _context.Update(user);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!GuestExists(guest.Id))
+                    if (!UserExists(user.Id))
                     {
                         return NotFound();
                     }
@@ -113,10 +113,10 @@ namespace Studievereniging.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(guest);
+            return View(user);
         }
 
-        // GET: Guests/Delete/5
+        // GET: Users/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -124,34 +124,34 @@ namespace Studievereniging.Controllers
                 return NotFound();
             }
 
-            var guest = await _context.Guests
+            var user = await _context.Users
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (guest == null)
+            if (user == null)
             {
                 return NotFound();
             }
 
-            return View(guest);
+            return View(user);
         }
 
-        // POST: Guests/Delete/5
+        // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var guest = await _context.Guests.FindAsync(id);
-            if (guest != null)
+            var user = await _context.Users.FindAsync(id);
+            if (user != null)
             {
-                _context.Guests.Remove(guest);
+                _context.Users.Remove(user);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool GuestExists(int id)
+        private bool UserExists(int id)
         {
-            return _context.Guests.Any(e => e.Id == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }

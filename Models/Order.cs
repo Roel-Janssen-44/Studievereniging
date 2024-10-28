@@ -12,12 +12,6 @@ namespace Studievereniging.Models
         public DateTime DateTime { get; set; }
 
         [Required]
-        public DateTime EstimatedCompletionTime { get; set; }
-
-        [Required]
-        public bool Completed { get; set; }
-
-        [Required]
         public ICollection<OrderLine>? OrderLines { get; set; }
 
         [AllowNull]

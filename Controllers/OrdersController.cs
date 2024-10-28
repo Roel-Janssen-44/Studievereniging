@@ -22,7 +22,8 @@ namespace Studievereniging.Controllers
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Orders.ToListAsync());
+            var applicationData = _context.Orders.Include(o => o.user);
+            return View(await applicationData.ToListAsync());
         }
 
         // GET: Orders/Details/5
@@ -34,6 +35,7 @@ namespace Studievereniging.Controllers
             }
 
             var order = await _context.Orders
+                .Include(o => o.user)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {
@@ -46,6 +48,7 @@ namespace Studievereniging.Controllers
         // GET: Orders/Create
         public IActionResult Create()
         {
+            ViewData["CustomerId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace Studievereniging.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateTime,EstimatedCompletionTime,Completed,CustomerId")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,DateTime,CustomerId")] Order order)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace Studievereniging.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CustomerId"] = new SelectList(_context.Users, "Id", "Id", order.CustomerId);
             return View(order);
         }
 
@@ -78,6 +82,7 @@ namespace Studievereniging.Controllers
             {
                 return NotFound();
             }
+            ViewData["CustomerId"] = new SelectList(_context.Users, "Id", "Id", order.CustomerId);
             return View(order);
         }
 
@@ -86,7 +91,7 @@ namespace Studievereniging.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,EstimatedCompletionTime,Completed,CustomerId")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,DateTime,CustomerId")] Order order)
         {
             if (id != order.Id)
             {
@@ -113,6 +118,7 @@ namespace Studievereniging.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CustomerId"] = new SelectList(_context.Users, "Id", "Id", order.CustomerId);
             return View(order);
         }
 
@@ -125,6 +131,7 @@ namespace Studievereniging.Controllers
             }
 
             var order = await _context.Orders
+                .Include(o => o.user)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (order == null)
             {

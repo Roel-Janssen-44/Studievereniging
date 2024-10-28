@@ -17,12 +17,8 @@ namespace Studievereniging.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderLine> OrderLines { get; set; }
-        public DbSet<Member> Members { get; set; }
-        public DbSet<Admin> Admins { get; set; }
-        public DbSet<Guest> Guests { get; set; }
-        public DbSet<BoardMember> BoardMembers { get; set; }
+        public DbSet<User> Users { get; set; }
         public DbSet<Activity> Activities { get; set; }
-
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -31,14 +27,7 @@ namespace Studievereniging.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure inheritance for User class
-            modelBuilder.Entity<User>()
-                .HasDiscriminator<string>("Discriminator")
-                .HasValue<Admin>("Admin")
-                .HasValue<Member>("Member")
-                .HasValue<Guest>("Guest")
-                .HasValue<BoardMember>("BoardMember");
-
+            // Configure Activity relationships
             modelBuilder.Entity<Activity>()
                 .HasMany(a => a.Organisers)
                 .WithMany(u => u.OrganiserActivities)
@@ -49,17 +38,20 @@ namespace Studievereniging.Data
                 .WithMany(u => u.ParticipantActivities)
                 .UsingEntity(j => j.ToTable("ActivityParticipants"));
 
+            // Configure Activity-Admin relationship
             modelBuilder.Entity<Activity>()
-                .HasOne(u => u.Admin)
-                .WithMany(a => a.Activities)
+                .HasOne(a => a.Admin)
+                .WithMany(u => u.Activities)
+                .HasForeignKey(a => a.AdminId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-
-
-
+            // Configure Order-User relationship
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.user)
+                .WithMany(u => u.Orders)
+                .HasForeignKey(o => o.CustomerId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
-
-
     }
 }
 

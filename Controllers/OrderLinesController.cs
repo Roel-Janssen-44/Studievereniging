@@ -48,7 +48,7 @@ namespace Studievereniging.Controllers
         // GET: OrderLines/Create
         public IActionResult Create()
         {
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Category");
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
             return View();
         }
 
@@ -65,7 +65,7 @@ namespace Studievereniging.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Category", orderLine.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderLine.ProductId);
             return View(orderLine);
         }
 
@@ -82,7 +82,7 @@ namespace Studievereniging.Controllers
             {
                 return NotFound();
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Category", orderLine.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderLine.ProductId);
             return View(orderLine);
         }
 
@@ -118,7 +118,7 @@ namespace Studievereniging.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Category", orderLine.ProductId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderLine.ProductId);
             return View(orderLine);
         }
 

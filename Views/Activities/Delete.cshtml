@@ -81,7 +81,7 @@
             @Html.DisplayNameFor(model => model.Admin)
         </dt>
         <dd class = "col-sm-10">
-            @(Model.Admin != null ? Html.DisplayFor(model => model.Admin.Name) : Html.Raw("No Admin"))
+            @Html.DisplayFor(model => model.Admin.Id)
         </dd>
     </dl>
     

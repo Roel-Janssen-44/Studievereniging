@@ -14,7 +14,7 @@ namespace Studievereniging.Models
         [Required]
         public int Amount { get; set; }
 
-        [Required]
+    
         public virtual Product? Product { get; set; }
 
 

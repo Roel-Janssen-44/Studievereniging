@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc.Rendering;
+
 namespace Studievereniging.ViewModels
 {
     public class ActivityViewModel
