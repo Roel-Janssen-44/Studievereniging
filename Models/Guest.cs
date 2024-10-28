@@ -2,6 +2,6 @@
 {
     public class Guest : User
     {
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 }

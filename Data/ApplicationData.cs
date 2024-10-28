@@ -31,11 +31,18 @@ namespace Studievereniging.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-     
+            // Configure inheritance for User class
+            modelBuilder.Entity<User>()
+                .HasDiscriminator<string>("Discriminator")
+                .HasValue<Admin>("Admin")
+                .HasValue<Member>("Member")
+                .HasValue<Guest>("Guest")
+                .HasValue<BoardMember>("BoardMember");
+
             modelBuilder.Entity<Activity>()
-            .HasMany(a => a.Organisers)
-            .WithMany(u => u.OrganiserActivities)
-            .UsingEntity(j => j.ToTable("ActivityOrganisers"));
+                .HasMany(a => a.Organisers)
+                .WithMany(u => u.OrganiserActivities)
+                .UsingEntity(j => j.ToTable("ActivityOrganisers"));
 
             modelBuilder.Entity<Activity>()
                 .HasMany(a => a.Participants)
