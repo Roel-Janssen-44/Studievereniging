@@ -48,7 +48,8 @@ namespace Studievereniging.Controllers
         // GET: Activities/Create
         public IActionResult Create()
         {
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Discriminator");
+            // Change from Discriminator to Name for the display text
+            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name");
             return View();
         }
 
@@ -65,7 +66,8 @@ namespace Studievereniging.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Discriminator", activity.AdminId);
+            // Also update here to use Name instead of Discriminator
+            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name", activity.AdminId);
             return View(activity);
         }
 
@@ -82,7 +84,8 @@ namespace Studievereniging.Controllers
             {
                 return NotFound();
             }
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Discriminator", activity.AdminId);
+            // Update here as well
+            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name", activity.AdminId);
             return View(activity);
         }
 
@@ -118,7 +121,8 @@ namespace Studievereniging.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Discriminator", activity.AdminId);
+            // Update here as well
+            ViewData["AdminId"] = new SelectList(_context.Admins, "Id", "Name", activity.AdminId);
             return View(activity);
         }
 

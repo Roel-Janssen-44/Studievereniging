@@ -9,3 +9,4 @@ namespace Studievereniging.Models
         public ICollection<Activity>? Activities { get; } = new List<Activity>();
     }
 }
+    
