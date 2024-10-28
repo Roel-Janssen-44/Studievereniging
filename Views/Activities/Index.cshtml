@@ -1,101 +1,135 @@
-@model IEnumerable<Studievereniging.Models.Activity>
+@using Studievereniging.ViewModels
+
+@model IEnumerable<ActivityViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Activities";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="display-4">Upcoming Activities</h1>
+        <a asp-action="Create" class="btn btn-primary rounded-pill px-4">
+            <i class="bi bi-plus-lg"></i> Create Activity
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MaxParticipants)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RegistrationDeadline)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Calendar)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsPublic)
-            </th>
-            <th>
-                Admin
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MaxParticipants)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Price)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegistrationDeadline)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Calendar)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Image)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsPublic)
-            </td>
-            <td>
-                @(item.Admin != null ? Html.DisplayFor(modelItem => item.Admin.Name) : Html.Raw("No Admin"))
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="row g-4">
+        @foreach (var activity in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    <div class="position-relative">
+                        @if (!string.IsNullOrEmpty(activity.ImageUrl))
+                        {
+                            <img src="@activity.ImageUrl" class="card-img-top" alt="@activity.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="bi bi-calendar-event text-muted" style="font-size: 3rem;"></i>
+                            </div>
+                        }
+                        @if (activity.IsFullyBooked)
+                        {
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-danger">Fully Booked</span>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">@activity.Name</h5>
+                        <div class="card-text text-muted small mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-geo-alt me-2"></i>
+                                <span>@activity.Location</span>
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar me-2"></i>
+                                <span>@activity.StartDate.ToString("dd MMM yyyy HH:mm")</span>
+                            </div>
+                            @if (activity.Price.HasValue)
+                            {
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-tag me-2"></i>
+                                    <span>@activity.Price.Value.ToString("C")</span>
+                                </div>
+                            }
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-person me-2"></i>
+                                <span>Organized by @activity.AdminName</span>
+                            </div>
+                        </div>
+
+                        @if (activity.MaxParticipants.HasValue)
+                        {
+                            <div class="mb-3">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <small class="text-muted">Participants</small>
+                                    <small class="text-muted">@activity.CurrentParticipants/@activity.MaxParticipants</small>
+                                </div>
+                                <div class="progress" style="height: 5px;">
+                                    @{
+                                        var percentage = (activity.CurrentParticipants * 100) / activity.MaxParticipants.Value;
+                                    }
+                                    <div class="progress-bar @(percentage >= 100 ? "bg-danger" : "bg-success")" 
+                                         role="progressbar" 
+                                         style="width: @percentage%">
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 pb-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Details" asp-route-id="@activity.Id" 
+                               class="btn btn-outline-primary rounded-pill px-4">
+                                View Details
+                            </a>
+                            <div class="btn-group">
+                                <a asp-action="Edit" asp-route-id="@activity.Id" 
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@activity.Id" 
+                                   class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .hover-shadow {
+        transition: all 0.3s ease;
+    }
+
+    .hover-shadow:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    }
+
+    .card {
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .progress {
+        border-radius: 10px;
+    }
+
+    .btn-group .btn:first-child {
+        border-top-left-radius: 20px;
+        border-bottom-left-radius: 20px;
+    }
+
+    .btn-group .btn:last-child {
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+    }
+</style>

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
-
+using Studievereniging.ViewModels;
 namespace Studievereniging.Controllers
 {
     public class ActivitiesController : Controller
@@ -22,8 +22,27 @@ namespace Studievereniging.Controllers
         // GET: Activities
         public async Task<IActionResult> Index()
         {
-            var applicationData = _context.Activities.Include(a => a.Admin);
-            return View(await applicationData.ToListAsync());
+            var activities = await _context.Activities
+                .Include(a => a.Admin)
+                .Include(a => a.Participants)
+                .Select(a => new ActivityViewModel
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    Location = a.Location,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    Category = a.Category,
+                    Price = a.Price,
+                    MaxParticipants = a.MaxParticipants,
+                    CurrentParticipants = a.Participants.Count,
+                    AdminName = a.Admin != null ? a.Admin.Name : "Unknown",
+                    ImageUrl = a.Image
+                })
+                .OrderBy(a => a.StartDate)
+                .ToListAsync();
+
+            return View(activities);
         }
 
         // GET: Activities/Details/5
