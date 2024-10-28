@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 
 namespace Studievereniging
@@ -15,7 +16,8 @@ namespace Studievereniging
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            builder.Services.AddDbContext<ApplicationData>();
+            builder.Services.AddDbContext<ApplicationData>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

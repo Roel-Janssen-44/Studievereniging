@@ -1,11 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Studievereniging.Models;
 using System.Data;
+using Microsoft.Extensions.Configuration;
 
 namespace Studievereniging.Data
 {
     public class ApplicationData : DbContext
     {
+        private readonly IConfiguration _configuration;
+
+        public ApplicationData(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderLine> OrderLines { get; set; }
@@ -18,7 +26,7 @@ namespace Studievereniging.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=.;Initial Catalog=Studievereniging;Trusted_Connection=True;TrustServerCertificate=True");
+            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -47,6 +55,7 @@ namespace Studievereniging.Data
 
     }
 }
+
 
 
 
