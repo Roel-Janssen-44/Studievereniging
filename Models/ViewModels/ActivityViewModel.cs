@@ -34,27 +34,15 @@ namespace Studievereniging.Models.ViewModels
         public string? Image { get; set; }
         
         [Display(Name = "Is Public")]
-        public bool IsPublic { get; set; } = true;  // Changed from bool? to bool with default value
+        public bool IsPublic { get; set; } = true;
 
-        // For organizer selection
         [Display(Name = "Organizers")]
         public List<int> SelectedOrganizerIds { get; set; } = new List<int>();
         
-        // For displaying available organizers in dropdown
         public List<UserSelectViewModel> AvailableOrganizers { get; set; } = new List<UserSelectViewModel>();
         
-        // For displaying current organizers
         public List<UserSelectViewModel> CurrentOrganizers { get; set; } = new List<UserSelectViewModel>();
         
-        // For displaying participants
         public List<UserSelectViewModel> CurrentParticipants { get; set; } = new List<UserSelectViewModel>();
-    }
-
-    public class UserSelectViewModel
-    {
-        public int Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string Role { get; set; } = string.Empty;
-        public bool IsSelected { get; set; }
     }
 }

@@ -363,3 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 appsettings.Development.json
+
+## Add to existing .gitignore or create new file
+appsettings.Development.json
