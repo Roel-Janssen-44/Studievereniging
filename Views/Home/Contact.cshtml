@@ -1,28 +1,63 @@
 ﻿@{
-    ViewBag.Title = "Contact";
+    ViewData["Title"] = "Contact - Invictus";
 }
 
-<h2>Contact</h2>
-
-<p>@ViewBag.Message</p>
-
-<p><strong>Adres:</strong> 123 Straatnaam, 4567 AB Stad</p>
-<p><strong>Telefoonnummer:</strong> +31 6 12345678</p>
-<p><strong>Email:</strong> info@studievereniging.nl</p>
-
-<h3>Neem contact op</h3>
-<form method="post" action="/Home/SubmitContact">
-    <div class="form-group">
-        <label for="name">Naam:</label>
-        <input type="text" class="form-control" id="name" name="name" required>
+<!-- Hero Section -->
+<div class="hero rounded-5 mb-4">
+    <div class="container hero-content rounded-5">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-3">Neem contact op met Invictus</h1>
+                <p class="lead mb-4">
+                    Heb je vragen? Neem contact op met ons team en we helpen je graag verder!
+                </p>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="~/images/contact-illustration.svg" alt="Contact" class="img-fluid" style="max-height: 300px;">
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="email">Email:</label>
-        <input type="email" class="form-control" id="email" name="email" required>
+</div>
+
+<!-- Contact Information and Form -->
+<div class="container mt-4">
+    <div class="row g-4">
+        <!-- Contact Information -->
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Contact Informatie</h5>
+                    <p class="card-text">
+                        <i class="bi bi-envelope text-primary"></i> info@invictus.nl<br>
+                        <i class="bi bi-geo-alt text-primary"></i> Amsterdam, Nederland<br>
+                        <i class="bi bi-telephone text-primary"></i> +31 (0)20 123 4567
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-md-6">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Stuur ons een bericht</h5>
+                    <form method="post" action="/Home/SubmitContact">
+                        <div class="form-group mb-3">
+                            <label for="name">Naam:</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="email">Email:</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="message">Bericht:</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg w-100">Verstuur</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-        <label for="message">Bericht:</label>
-        <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Verstuur</button>
-</form>
+</div>
