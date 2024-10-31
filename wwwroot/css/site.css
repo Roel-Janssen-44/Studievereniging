@@ -18,23 +18,35 @@ body {
 
 /* Footer styles */
 .footer {
-    background-color: #f8f9fa;
-    color: #6c757d;
-    padding: 20px 0;
-    text-align: center;
+    color: #D1AF7B; /* Standaard kleur voor alle tekst in de footer */
 }
 
+    /* Specifieke stijl voor titels in #178994 */
+    .footer h5 {
+        color: #178994 !important;
+    }
+
+    /* "Contacteer ons" link en andere links in de footer in goud */
+    .footer a.btn-link {
+        color: #D1AF7B !important; /* Zorgt ervoor dat "Contacteer ons" in goud is */
+        transition: color 0.3s;
+    }
+
+    /* Andere links krijgen goud standaard, maar veranderen bij hover naar #178994 */
     .footer a {
-        color: #6c757d;
+        color: #D1AF7B;
         transition: color 0.3s;
     }
 
         .footer a:hover {
-            color: #0056b3;
+            color: #178994; /* Hover effect voor alle links in de footer */
         }
 
+    /* Algemene stijl voor tekst en iconen */
+    .footer p,
+    .footer i,
     .footer .text-muted {
-        color: #6c757d !important;
+        color: #D1AF7B !important;
     }
 
 .content-wrapper {
