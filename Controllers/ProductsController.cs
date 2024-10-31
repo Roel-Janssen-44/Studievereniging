@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
+using Studievereniging.Models.ViewModels;
 
 namespace Studievereniging.Controllers
 {
@@ -153,5 +154,7 @@ namespace Studievereniging.Controllers
         {
             return _context.Products.Any(e => e.Id == id);
         }
+
+
     }
 }
