@@ -1,32 +1,50 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
+    margin: 0; /* Verwijder marges aan de onderkant */
+    padding-bottom: 60px; /* Ruimte voor de footer, zodat deze niet overlapt */
+    box-sizing: border-box;
 }
 
+/* Footer styles */
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+    background-color: #f8f9fa;
+    color: #6c757d;
+    padding: 20px 0;
+    text-align: center;
+}
+
+    .footer a {
+        color: #6c757d;
+        transition: color 0.3s;
+    }
+
+        .footer a:hover {
+            color: #0056b3;
+        }
+
+    .footer .text-muted {
+        color: #6c757d !important;
+    }
+
+.content-wrapper {
+    padding-top: 76px; /* Afhankelijk van de navbar hoogte */
+    min-height: calc(100vh - 60px); /* Ruimte voor de footer aan de onderkant */
+}
+
+/* Overige stijlen */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 /* Animation for cards */
@@ -35,6 +53,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -46,10 +65,10 @@ body {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.activity-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
-}
+    .activity-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+    }
 
 /* Hero section styles */
 .hero {
@@ -61,16 +80,16 @@ body {
     overflow: hidden;
 }
 
-.hero::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="rgba(255,255,255,0.1)" x="0" y="0" width="100" height="100"/></svg>') repeat;
-    opacity: 0.1;
-}
+    .hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="rgba(255,255,255,0.1)" x="0" y="0" width="100" height="100"/></svg>') repeat;
+        opacity: 0.1;
+    }
 
 .hero-content {
     position: relative;
@@ -112,21 +131,21 @@ body {
     font-weight: 500;
 }
 
-.nav-link::after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 2px;
-    bottom: 0;
-    left: 50%;
-    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-    transition: all 0.3s ease;
-    transform: translateX(-50%);
-}
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        width: 0;
+        height: 2px;
+        bottom: 0;
+        left: 50%;
+        background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+    }
 
-.nav-link:hover::after {
-    width: 100%;
-}
+    .nav-link:hover::after {
+        width: 100%;
+    }
 
 /* Dropdown Animations */
 .dropdown-menu-animated {
@@ -141,6 +160,7 @@ body {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -152,34 +172,28 @@ body {
     transition: all 0.2s ease;
 }
 
-.dropdown-item:hover {
-    background: linear-gradient(135deg, rgba(26,35,126,0.1) 0%, rgba(13,71,161,0.1) 100%);
-    transform: translateX(5px);
-}
+    .dropdown-item:hover {
+        background: linear-gradient(135deg, rgba(26,35,126,0.1) 0%, rgba(13,71,161,0.1) 100%);
+        transform: translateX(5px);
+    }
 
-.dropdown-item i {
-    margin-right: 0.5rem;
-    font-size: 0.9rem;
-}
-
-/* Content Wrapper for Fixed Navbar */
-.content-wrapper {
-    padding-top: 76px; /* Adjust based on navbar height */
-    min-height: calc(100vh - 60px); /* Adjust based on footer height */
-}
+    .dropdown-item i {
+        margin-right: 0.5rem;
+        font-size: 0.9rem;
+    }
 
 /* Responsive Adjustments */
 @media (max-width: 991.98px) {
     .navbar-collapse {
         padding: 1rem 0;
     }
-    
+
     .dropdown-menu {
         border: none;
         padding-left: 1.5rem;
         box-shadow: none;
     }
-    
+
     .nav-link::after {
         display: none;
     }
@@ -190,11 +204,9 @@ body {
     color: #1a237e !important;
 }
 
-.nav-link.active::after {
-    width: 100%;
-}
-
-/* Add these styles to your existing site.css */
+    .nav-link.active::after {
+        width: 100%;
+    }
 
 /* Common page styles */
 .page-header {
@@ -214,17 +226,6 @@ body {
 .form-select:focus {
     border-color: #1a237e;
     box-shadow: 0 0 0 0.2rem rgba(26,35,126,0.25);
-}
-
-/* Card animations */
-.animate-card {
-    animation: fadeInUp 0.6s ease-out;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.animate-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
 }
 
 /* Button styles */
@@ -259,7 +260,7 @@ body {
 }
 
 .breadcrumb-item + .breadcrumb-item::before {
-    content: "â€º";
+    content: "›";
     color: #1a237e;
 }
 
