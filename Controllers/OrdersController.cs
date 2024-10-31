@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -70,10 +66,17 @@ namespace Studievereniging.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,DateTime,CustomerId,OrderLines")] Order order)
+        public async Task<IActionResult> Create([Bind("Id,OrderLines")] Order order)
         {
             if (ModelState.IsValid)
             {
+
+                order.DateTime = DateTime.Now;
+
+                // Set CustomerId to null (or handle it differently if necessary)
+                order.CustomerId = 1;
+
+
 
                 _context.Add(order);
                 await _context.SaveChangesAsync();
@@ -176,5 +179,8 @@ namespace Studievereniging.Controllers
         {
             return _context.Orders.Any(e => e.Id == id);
         }
+
+
     }
 }
+
