@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Studievereniging.Models.User>
+
+@{
+    ViewData["Title"] = "Gebruikers - Victuz";
+}
+
+
+<div class="container">
+    <h2>Login</h2>
+
+    @{
+        foreach(var item in Model)
+        {
+            <p>@item.Name</p>
+        }
+    }
+
+    <form asp-action="Login" method="post">
+        <div class="form-group">
+        </div>
+        <button type="submit" class="btn btn-primary">Login</button>
+
+        <p>
+            <a asp-action="Create" class="btn btn-secondary">Create Account</a>
+        </p>
+        <hr />
+        <b>Current logged in user:</b>
+    </form>
+</div>
