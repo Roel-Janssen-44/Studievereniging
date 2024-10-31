@@ -1,80 +1,93 @@
 @model Studievereniging.Models.Order
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Order maken";
 }
 
-<h1>Create</h1>
 
-<h4>Order</h4>
-<hr />
-<form asp-action="Create">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container">
 
-    <!-- Order DateTime -->
-    <div class="form-group">
-        <label asp-for="DateTime" class="control-label"></label>
-        <input asp-for="DateTime" class="form-control" />
-        <span asp-validation-for="DateTime" class="text-danger"></span>
-    </div>
+    <!--
 
-    <!-- Customer Selection -->
-    <div class="form-group">
-        <label asp-for="CustomerId" class="control-label"></label>
-        <select asp-for="CustomerId" class="form-control" asp-items="ViewBag.CustomerId"></select>
-    </div>
+   <h1>Create</h1>
 
-    <!-- OrderLines Section -->
-    <h4>Order Lines</h4>
-    <div id="orderLines">
-        <!-- Template for an OrderLine -->
-        <div class="order-line-template form-group">
-            <div class="form-group">
-                <label>Product</label>
-                <select name="OrderLines[0].ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+   <h3>Products</h3>
+   <select name="OrderLines[0].ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+    -->
+
+ 
+
+    <div>
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- OrderLines Section -->
+            <h4 style="margin-top: 50px; margin-bottom: 20px;">Winkelmandje</h4>
+            <div id="orderLines">
+                <!-- Order lines will be appended here -->
             </div>
-            <div class="form-group">
-                <label>Amount</label>
-                <input name="OrderLines[0].Amount" class="form-control" />
+
+            <!-- Hidden OrderLine Template -->
+            <div id="orderLineTemplate" class="order-line-template form-group" style="display: none; flex-direction: row; gap: 20px; margin-bottom: 10px;">
+                <div class="form-group">
+                    <select name="OrderLines[0].ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+                </div>
+                <div class="form-group">
+                    <input name="OrderLines[0].Amount" class="form-control" placeholder="Aantal" />
+                </div>
+                <button type="button" class="btn btn-danger remove-order-line">Remove</button>
             </div>
-            <button type="button" class="btn btn-danger remove-order-line">Remove</button>
-        </div>
+
+            <button type="button" class="btn btn-secondary" id="addOrderLine" style="margin-top: 10px;">Add other product</button>
+            <br /><br />
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
     </div>
-
-    <button type="button" class="btn btn-secondary" id="addOrderLine">Add Order Line</button>
-    <br /><br />
-
-    <div class="form-group">
-        <input type="submit" value="Create" class="btn btn-primary" />
-    </div>
-</form>
-
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
 <script>
-    document.getElementById('addOrderLine').addEventListener('click', function() {
+    document.addEventListener("DOMContentLoaded", function() {
         const orderLinesDiv = document.getElementById('orderLines');
-        const orderLineTemplate = document.querySelector('.order-line-template').cloneNode(true);
-        const index = orderLinesDiv.children.length;
+        const orderLineTemplate = document.getElementById('orderLineTemplate');
 
-        orderLineTemplate.querySelectorAll('select, input').forEach(function(input) {
-            input.name = input.name.replace('[0]', `[${index}]`);
+        document.getElementById('addOrderLine').addEventListener('click', function() {
+            // Ensure the template exists before attempting to clone it
+            if (orderLineTemplate) {
+                const newOrderLine = orderLineTemplate.cloneNode(true);
+                const index = orderLinesDiv.children.length;
+
+                newOrderLine.querySelectorAll('select, input').forEach(function(input) {
+                    input.name = input.name.replace('[0]', `[${index}]`);
+                });
+
+                newOrderLine.style.display = "flex";
+                newOrderLine.classList.remove('order-line-template');
+                orderLinesDiv.appendChild(newOrderLine);
+            } else {
+                console.error("Order line template not found.");
+            }
         });
 
-        orderLineTemplate.classList.remove('order-line-template');
-        orderLinesDiv.appendChild(orderLineTemplate);
+        orderLinesDiv.addEventListener('click', function(event) {
+            if (event.target.classList.contains('remove-order-line')) {
+                if (orderLinesDiv.children.length > 1) {
+                    event.target.closest('.form-group').remove();
+                } else {
+                    alert("You must have at least one order line.");
+                }
+            }
+        });
+
+        // Add the first order line on load
+        document.getElementById('addOrderLine').click();
     });
 
-    document.getElementById('orderLines').addEventListener('click', function(event) {
-        if (event.target.classList.contains('remove-order-line')) {
-            event.target.closest('.order-line-template').remove();
-        }
-    });
 </script>
