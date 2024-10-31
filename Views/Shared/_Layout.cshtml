@@ -26,11 +26,14 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto">
+
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-door"></i> Home
+                            <a class="nav-link" asp-controller="Activities" asp-action="Index">
+                                <i class="bi bi-list"></i> Alle Activiteiten
                             </a>
                         </li>
+                        <!--
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <i class="bi bi-calendar-event"></i> Activiteiten
@@ -54,6 +57,9 @@
                                 </li>
                             </ul>
                         </li>
+                        -->
+                        <!--
+
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
                                 <i class="bi bi-shop"></i> Producten
@@ -71,25 +77,10 @@
                                 </li>
                             </ul>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-cart3"></i> Bestellingen
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-animated">
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
-                                        <i class="bi bi-list-ul"></i> Alle Bestellingen
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-person-check"></i> Mijn Bestellingen
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
+                        -->
+
                         <li class="nav-item">
-                            <a class="nav-link" asp-controller="Shop" asp-action="Shop">
+                            <a class="nav-link" asp-controller="Orders" asp-action="Create">
                                 <i class="bi bi-cart3"></i> Shop
                             </a>
                         </li>
