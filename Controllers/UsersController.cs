@@ -24,11 +24,6 @@ namespace Studievereniging.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Login()
-        {
-            return View(await _context.Users.ToListAsync());
-        }
-
         // GET: Users 
         public async Task<IActionResult> Index()
         {
