@@ -3,6 +3,7 @@ using Studievereniging.Data;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Studievereniging.Models;
+using Studievereniging.Services;
 
 namespace Studievereniging
 {
@@ -72,6 +73,16 @@ namespace Studievereniging
                 options.SlidingExpiration = true;
             });
 
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+
+            builder.Services.AddScoped<CartService>();
+            builder.Services.AddHttpContextAccessor();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -89,6 +100,8 @@ namespace Studievereniging
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.MapControllerRoute(
                 name: "default",

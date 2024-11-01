@@ -1,6 +1,11 @@
 @using System.Security.Claims
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Studievereniging.Models.ApplicationUser> UserManager
+@inject RoleManager<IdentityRole> RoleManager
 @{
-    var userRole = User?.FindFirst(ClaimTypes.Role)?.Value ?? Studievereniging.Models.Role.Guest;
+    var user = await UserManager.GetUserAsync(User);
+    var isAdmin = user != null && await UserManager.IsInRoleAsync(user, "Admin");
+    var isMember = user != null && await UserManager.IsInRoleAsync(user, "Member");
 }
 
 <!DOCTYPE html>
@@ -122,73 +127,94 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto">
-
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Activities" asp-action="Index">
-                                <i class="bi bi-list"></i> Alle Activiteiten
-                            </a>
-                        </li>
-
-                        @if (userRole == Studievereniging.Models.Role.Admin)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Activities" asp-action="Create">
-                                    <i class="bi bi-plus-lg"></i> Nieuwe Activiteit
-                                </a>
-                            </li>
-                        }
-                        <!--
-
+                        <!-- Activities Dropdown -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-calendar-event"></i> Activiteiten
+                                <i class="bi bi-calendar-event"></i> Activities
                             </a>
                             <ul class="dropdown-menu dropdown-menu-animated">
                                 <li>
                                     <a class="dropdown-item" asp-controller="Activities" asp-action="Index">
-                                        <i class="bi bi-list"></i> Alle Activiteiten
+                                        <i class="bi bi-list"></i> All Activities
                                     </a>
                                 </li>
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Activities" asp-action="Create">
-                                        <i class="bi bi-plus-lg"></i> Nieuwe Activiteit
-                                    </a>
-                                </li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    <a class="dropdown-item" href="#">
-                                        <i class="bi bi-person-check"></i> Mijn Activiteiten
-                                    </a>
-                                </li>
+                                @if (isAdmin)
+                                {
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Activities" asp-action="Create">
+                                            <i class="bi bi-plus-lg"></i> Create Activity
+                                        </a>
+                                    </li>
+                                }
+                                @if (User.Identity?.IsAuthenticated ?? false)
+                                {
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">
+                                            <i class="bi bi-person-check"></i> My Activities
+                                        </a>
+                                    </li>
+                                }
                             </ul>
                         </li>
-                        -->
-                        <!--
 
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-shop"></i> Producten
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-animated">
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Products" asp-action="Index">
-                                        <i class="bi bi-grid"></i> Alle Producten
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Products" asp-action="Create">
-                                        <i class="bi bi-plus-lg"></i> Nieuw Product
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                        -->
+                        @if (isAdmin)
+                        {
+                            <!-- Products Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                    <i class="bi bi-shop"></i> Products
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-animated">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Products" asp-action="Index">
+                                            <i class="bi bi-grid"></i> All Products
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Products" asp-action="Create">
+                                            <i class="bi bi-plus-lg"></i> Create Product
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Orders" asp-action="Create">
-                                <i class="bi bi-cart3"></i> Shop
-                            </a>
-                        </li>
+                            <!-- Orders Dropdown -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                    <i class="bi bi-cart3"></i> Orders
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-animated">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
+                                            <i class="bi bi-list"></i> All Orders
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Orders" asp-action="Create">
+                                            <i class="bi bi-plus-lg"></i> Create Order
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                            <!-- Users Management -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Users" asp-action="Index">
+                                    <i class="bi bi-people"></i> Users
+                                </a>
+                            </li>
+                        }
+                        else if (isMember)
+                        {
+                            <!-- Member-only menu items -->
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Orders" asp-action="Create">
+                                    <i class="bi bi-cart3"></i> Shop
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Home" asp-action="Contact">
                                 <i class="bi bi-envelope"></i> Contact
@@ -196,6 +222,7 @@
                         </li>
                     </ul>
 
+                    <!-- User Authentication Section -->
                     @if (User.Identity?.IsAuthenticated ?? false)
                     {
                         <ul class="navbar-nav">
@@ -205,11 +232,11 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Users" asp-action="Details" asp-route-id="@User.Identity.Name">
+                                        <a class="dropdown-item" asp-controller="Users" asp-action="Details" asp-route-id="@user?.Id">
                                             <i class="bi bi-person"></i> My Profile
                                         </a>
                                     </li>
-                                    @if (User.IsInRole("Admin"))
+                                    @if (isAdmin)
                                     {
                                         <li>
                                             <a class="dropdown-item" asp-controller="Users" asp-action="Index">

@@ -173,7 +173,16 @@ namespace Studievereniging.Controllers
             {
                 return NotFound();
             }
-            return View(user);
+
+            var viewModel = new UserEditViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Role = user.Role
+            };
+
+            return View(viewModel);
         }
 
         // POST: Users/Edit/5
@@ -181,7 +190,7 @@ namespace Studievereniging.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("UserName,Email")] ApplicationUser model)
+        public async Task<IActionResult> Edit(string id, UserEditViewModel model)
         {
             if (id != model.Id)
             {
@@ -202,6 +211,13 @@ namespace Studievereniging.Controllers
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
+                    // Remove all existing roles
+                    var currentRoles = await _userManager.GetRolesAsync(user);
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+                    // Add the new role
+                    await _userManager.AddToRoleAsync(user, model.Role);
+
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -211,6 +227,11 @@ namespace Studievereniging.Controllers
                 }
             }
             return View(model);
+        }
+
+        private async Task<bool> UserExists(string id)
+        {
+            return await _userManager.FindByIdAsync(id) != null;
         }
 
         // GET: Users/Delete/5
