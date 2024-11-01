@@ -1,12 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
+using Studievereniging.Models.ViewModels;
+
 
 namespace Studievereniging.Controllers
 {
@@ -19,7 +24,12 @@ namespace Studievereniging.Controllers
             _context = context;
         }
 
-        // GET: Users
+        public async Task<IActionResult> Login()
+        {
+            return View(await _context.Users.ToListAsync());
+        }
+
+        // GET: Users 
         public async Task<IActionResult> Index()
         {
             return View(await _context.Users.ToListAsync());

@@ -26,8 +26,10 @@ namespace Studievereniging
                             errorNumbersToAdd: null);
                     }));
 
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
 
             var app = builder.Build();
 

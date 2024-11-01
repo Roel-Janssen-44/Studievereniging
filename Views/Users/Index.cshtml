@@ -1,7 +1,7 @@
 @model IEnumerable<Studievereniging.Models.User>
 
 @{
-    ViewData["Title"] = "Gebruikers - Invictus";
+    ViewData["Title"] = "Gebruikers - Victuz";
 }
 
 <div class="hero rounded-5 mb-4">
@@ -10,7 +10,7 @@
             <div class="col-lg-8">
                 <h1 class="display-4 fw-bold mb-3">Gebruikersbeheer</h1>
                 <p class="lead mb-4">
-                    Beheer alle gebruikers van Invictus. Bekijk en bewerk rollen en gegevens.
+                    Beheer alle gebruikers van Victuz. Bekijk en bewerk rollen en gegevens.
                 </p>
                 @if (User?.IsInRole(Role.Admin) == true)
                 {
