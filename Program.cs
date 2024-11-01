@@ -19,8 +19,10 @@ namespace Studievereniging
             builder.Services.AddDbContext<ApplicationData>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
 
             var app = builder.Build();
 
