@@ -1,33 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Studievereniging.Models;
-using System.Data;
-using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Identity;
 
 namespace Studievereniging.Data
 {
-    public class ApplicationData : DbContext
+    public class ApplicationData : IdentityDbContext<ApplicationUser>
     {
-        private readonly IConfiguration _configuration;
-
-        public ApplicationData(IConfiguration configuration)
+        public ApplicationData(DbContextOptions<ApplicationData> options)
+            : base(options)
         {
-            _configuration = configuration;
         }
 
         public DbSet<Product> Products { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderLine> OrderLines { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<Activity> Activities { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure Activity relationships
+            base.OnModelCreating(modelBuilder); // This is crucial for Identity tables
+
+            // Configure Activity-ApplicationUser relationships
             modelBuilder.Entity<Activity>()
                 .HasMany(a => a.Organisers)
                 .WithMany(u => u.OrganiserActivities)
@@ -45,12 +39,21 @@ namespace Studievereniging.Data
                 .HasForeignKey(a => a.AdminId)
                 .OnDelete(DeleteBehavior.SetNull);
 
-            // Configure Order-User relationship
+            // Configure Order-ApplicationUser relationship
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.user)
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.CustomerId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            // Customize Identity table names (optional)
+            modelBuilder.Entity<ApplicationUser>().ToTable("Users");
+            modelBuilder.Entity<IdentityRole>().ToTable("Roles");
+            modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
+            modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
+            modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
+            modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
+            modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
         }
     }
 }
