@@ -6,7 +6,7 @@ namespace Studievereniging.Models
     {
         public int Id { get; set; }
         public required string Name { get; set; }
-        
+
         // Add Role property that uses the static values from Role class
         public required string Role { get; set; } = Models.Role.Guest; // Default to Guest role
         

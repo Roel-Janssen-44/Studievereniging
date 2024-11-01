@@ -18,23 +18,35 @@ body {
 
 /* Footer styles */
 .footer {
-    background-color: #f8f9fa;
-    color: #6c757d;
-    padding: 20px 0;
-    text-align: center;
+    color: #D1AF7B; /* Standaard kleur voor alle tekst in de footer */
 }
 
+    /* Specifieke stijl voor titels in #178994 */
+    .footer h5 {
+        color: #178994 !important;
+    }
+
+    /* "Contacteer ons" link en andere links in de footer in goud */
+    .footer a.btn-link {
+        color: #D1AF7B !important; /* Zorgt ervoor dat "Contacteer ons" in goud is */
+        transition: color 0.3s;
+    }
+
+    /* Andere links krijgen goud standaard, maar veranderen bij hover naar #178994 */
     .footer a {
-        color: #6c757d;
+        color: #D1AF7B;
         transition: color 0.3s;
     }
 
         .footer a:hover {
-            color: #0056b3;
+            color: #178994; /* Hover effect voor alle links in de footer */
         }
 
+    /* Algemene stijl voor tekst en iconen */
+    .footer p,
+    .footer i,
     .footer .text-muted {
-        color: #6c757d !important;
+        color: #D1AF7B !important;
     }
 
 .content-wrapper {
@@ -72,29 +84,29 @@ body {
 
 /* Hero section styles */
 .hero {
-    background: linear-gradient(135deg, #1a237e 0%, #0d47a1 100%);
-    color: white;
-    padding: 4rem 0;
-    margin-bottom: 3rem;
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(135deg, #178994 20%, #146471 50%, #D1AF7B 75%);
+    color: #ffffff; /* Tekstkleur voor goed contrast */
+    padding: 3rem 0; /* Verticale padding voor de hoogte */
+    border-radius: 15px; /* Maakt de randen ronder */
 }
 
-    .hero::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="rgba(255,255,255,0.1)" x="0" y="0" width="100" height="100"/></svg>') repeat;
-        opacity: 0.1;
+    /* Pas de maat van de container aan */
+    .hero .container {
+        max-width: 900px; /* Hiermee bepaal je de maximale breedte van de inhoud */
+        padding: 0 2rem; /* Horizontale padding voor binnenruimte */
     }
 
-.hero-content {
-    position: relative;
-    z-index: 1;
-}
+    /* Pas de stijl van de h1-tekst aan */
+    .hero h1 {
+        font-size: 3.5rem; /* Pas de tekstgrootte aan voor de titel */
+        color: #D1AF7B; /* Tekstkleur die contrasteert met de achtergrond */
+    }
+
+    /* Pas de stijl van de paragraaftekst aan */
+    .hero p {
+        color: #ffffff; /* Tekstkleur voor de paragraaf */
+        font-size: 1.25rem; /* Pas de tekstgrootte aan voor de paragraaf */
+    }
 
 .activity-filter {
     background: white;
@@ -235,8 +247,100 @@ body {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    background: linear-gradient(135deg, #0d47a1 0%, #1a237e 100%);
+}
+
+/* Badge styles */
+.badge {
+    padding: 0.5em 1em;
+    font-weight: 500;
+}
+
+/* Table styles */
+.table-hover tbody tr:hover {
+    background: linear-gradient(135deg, rgba(26,35,126,0.05) 0%, rgba(13,71,161,0.05) 100%);
+}
+
+/* Breadcrumb styles */
+.breadcrumb {
+    background-color: transparent;
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #1a237e;
+}
+
+.breadcrumb-item a {
+    color: #1a237e;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #0d47a1;
+}
+
+/* Alert styles */
+.alert {
+    border: none;
+    border-radius: 0.5rem;
+}
+
+/* Select2 customization */
+.select2-container--bootstrap-5 .select2-selection {
+    border-color: #dee2e6;
+}
+
+.select2-container--bootstrap-5 .select2-selection:focus {
+    border-color: #1a237e;
+    box-shadow: 0 0 0 0.2rem rgba(26,35,126,0.25);
+}
+
+/* Loading animation */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
     }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+.loading {
+    animation: shimmer 2s infinite linear;
+    background: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
+    background-size: 1000px 100%;
+}
+
+/* Empty state styles */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    background-color: #f8f9fa;
+    border-radius: 1rem;
+    margin: 2rem 0;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.dropdown-toggle::after {
+    margin-left: 0;
+}
+
+.text-primary-gold {
+    color: #D1AF7B !important;
+}
+
+.text-teal {
+    color: #178994;
+}
+
