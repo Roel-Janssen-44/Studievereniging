@@ -1,45 +1,58 @@
 @model IEnumerable<Studievereniging.Models.Order>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Orders";
 }
 
-<div class="container">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Orders</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> New Order
+        </a>
+    </div>
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.user)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.user.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
-
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Order Date</th>
+                            <th>Customer</th>
+                            <th>Products</th>
+                            <th>Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.DateTime.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.user?.UserName</td>
+                                <td>
+                                    @string.Join(", ", item.OrderLines.Select(ol => $"{ol.Amount}x {ol.Product.Name}"))
+                                </td>
+                                <td>€@item.OrderLines.Sum(ol => ol.Amount * ol.Product.Price).ToString("F2")</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>

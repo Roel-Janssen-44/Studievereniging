@@ -11,35 +11,111 @@ using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
 using Studievereniging.Models.ViewModels;
-
+using Microsoft.AspNetCore.Identity;
 
 namespace Studievereniging.Controllers
 {
     public class UsersController : Controller
     {
-        private readonly ApplicationData _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UsersController(ApplicationData context)
+        public UsersController(
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
+            _roleManager = roleManager;
+        }
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _signInManager.PasswordSignInAsync(
+                    model.Username, 
+                    model.Password, 
+                    model.RememberMe, 
+                    lockoutOnFailure: true);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                
+                ModelState.AddModelError("", "Invalid login attempt.");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser 
+                { 
+                    UserName = model.Username,
+                    Email = model.Email
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Member");
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    return RedirectToAction("Index", "Home");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+            }
+            return View(model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: Users 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
+            var users = await _userManager.Users.ToListAsync();
+            return View(users);
         }
 
         // GET: Users/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -59,31 +135,54 @@ namespace Studievereniging.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Role")] User user)
+        public async Task<IActionResult> Create([Bind("UserName,Email,Password")] RegisterViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var user = new ApplicationUser 
+                { 
+                    UserName = model.Username,
+                    Email = model.Email
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    await _userManager.AddToRoleAsync(user, "Member");
+                    return RedirectToAction(nameof(Index));
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
-            return View(user);
+            return View(model);
         }
 
         // GET: Users/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
             }
-            return View(user);
+
+            var viewModel = new UserEditViewModel
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                Email = user.Email,
+                Role = user.Role
+            };
+
+            return View(viewModel);
         }
 
         // POST: Users/Edit/5
@@ -91,46 +190,59 @@ namespace Studievereniging.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Role")] User user)
+        public async Task<IActionResult> Edit(string id, UserEditViewModel model)
         {
-            if (id != user.Id)
+            if (id != model.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
                 {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                user.UserName = model.UserName;
+                user.Email = model.Email;
+
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
                 {
-                    if (!UserExists(user.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    // Remove all existing roles
+                    var currentRoles = await _userManager.GetRolesAsync(user);
+                    await _userManager.RemoveFromRolesAsync(user, currentRoles);
+
+                    // Add the new role
+                    await _userManager.AddToRoleAsync(user, model.Role);
+
+                    return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
             }
-            return View(user);
+            return View(model);
+        }
+
+        private async Task<bool> UserExists(string id)
+        {
+            return await _userManager.FindByIdAsync(id) != null;
         }
 
         // GET: Users/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return NotFound();
@@ -142,21 +254,19 @@ namespace Studievereniging.Controllers
         // POST: Users/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var user = await _context.Users.FindAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user != null)
             {
-                _context.Users.Remove(user);
+                var result = await _userManager.DeleteAsync(user);
+                if (!result.Succeeded)
+                {
+                    throw new InvalidOperationException($"Unexpected error occurred deleting user with ID '{id}'.");
+                }
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.Id == id);
         }
     }
 }
