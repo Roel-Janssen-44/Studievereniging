@@ -37,7 +37,7 @@ namespace Studievereniging.Models.ViewModels
         public bool IsPublic { get; set; } = true;
 
         [Display(Name = "Organizers")]
-        public List<int> SelectedOrganizerIds { get; set; } = new List<int>();
+        public List<string> SelectedOrganizerIds { get; set; } = new List<string>();
         
         public List<UserSelectViewModel> AvailableOrganizers { get; set; } = new List<UserSelectViewModel>();
         

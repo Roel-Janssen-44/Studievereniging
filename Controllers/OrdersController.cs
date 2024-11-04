@@ -3,23 +3,30 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Studievereniging.Controllers
 {
     public class OrdersController : Controller
     {
         private readonly ApplicationData _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public OrdersController(ApplicationData context)
+        public OrdersController(ApplicationData context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Orders
         public async Task<IActionResult> Index()
         {
-            var applicationData = _context.Orders.Include(o => o.user);
-            return View(await applicationData.ToListAsync());
+            var orders = await _context.Orders
+                .Include(o => o.user)
+                .Include(o => o.OrderLines)
+                    .ThenInclude(ol => ol.Product)
+                .ToListAsync();
+            return View(orders);
         }
 
         // GET: Orders/Details/5
@@ -32,8 +39,10 @@ namespace Studievereniging.Controllers
 
             var order = await _context.Orders
                 .Include(o => o.user)
-                .Include(o => o.OrderLines).ThenInclude(ol => ol.Product)
+                .Include(o => o.OrderLines)
+                    .ThenInclude(ol => ol.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (order == null)
             {
                 return NotFound();
@@ -70,20 +79,19 @@ namespace Studievereniging.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 order.DateTime = DateTime.Now;
-
-                // Set CustomerId to null (or handle it differently if necessary)
-                order.CustomerId = 1;
-
-
+                
+                // Get current user
+                var currentUser = await _userManager.GetUserAsync(User);
+                order.CustomerId = currentUser?.Id;
+                order.user = currentUser;
 
                 _context.Add(order);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.CustomerId = new SelectList(_context.Users, "Id", "Name", order.CustomerId);
+            ViewBag.CustomerId = new SelectList(await _userManager.Users.ToListAsync(), "Id", "UserName", order.CustomerId);
             ViewBag.ProductId = new SelectList(_context.Products, "Id", "Name");
             return View(order);
         }

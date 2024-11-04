@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
@@ -14,10 +14,22 @@ namespace Studievereniging.Controllers
     public class ActivitiesController : Controller
     {
         private readonly ApplicationData _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public ActivitiesController(ApplicationData context)
+        // In-memory lijst om suggesties tijdelijk op te slaan
+        private static List<string> ActivitySuggestions = new List<string>();
+
+        public ActivitiesController(ApplicationData context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+
+        // Methode om het huidige ingelogde gebruikers-ID te krijgen
+        private async Task<string> GetCurrentUserId()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            return user?.Id;
         }
 
         // GET: Activities
@@ -65,14 +77,13 @@ namespace Studievereniging.Controllers
         }
 
         // POST: Activities/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ActivityViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
+                var currentUser = await _userManager.GetUserAsync(User);
                 var activity = new Activity
                 {
                     Name = viewModel.Name,
@@ -84,10 +95,12 @@ namespace Studievereniging.Controllers
                     RegistrationDeadline = viewModel.RegistrationDeadline,
                     Category = viewModel.Category,
                     Image = viewModel.Image,
-                    IsPublic = viewModel.IsPublic
+                    IsPublic = viewModel.IsPublic,
+                    AdminId = currentUser?.Id,
+                    Admin = currentUser
                 };
 
-                // Add organizers
+                // Voeg organisatoren toe
                 if (viewModel.SelectedOrganizerIds != null)
                 {
                     var organizers = await _context.Users
@@ -143,8 +156,6 @@ namespace Studievereniging.Controllers
         }
 
         // POST: Activities/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, ActivityViewModel viewModel)
@@ -167,7 +178,7 @@ namespace Studievereniging.Controllers
                         return NotFound();
                     }
 
-                    // Update activity properties
+                    // Update de eigenschappen van de activiteit
                     activity.Name = viewModel.Name;
                     activity.StartDate = viewModel.StartDate;
                     activity.EndDate = viewModel.EndDate;
@@ -179,7 +190,7 @@ namespace Studievereniging.Controllers
                     activity.Image = viewModel.Image;
                     activity.IsPublic = viewModel.IsPublic;
 
-                    // Update organizers
+                    // Update organisatoren
                     activity.Organisers.Clear();
                     if (viewModel.SelectedOrganizerIds != null)
                     {
@@ -209,23 +220,7 @@ namespace Studievereniging.Controllers
             return View(viewModel);
         }
 
-        private async Task<List<UserSelectViewModel>> GetAvailableOrganizers()
-        {
-            return await _context.Users
-                .Select(u => new UserSelectViewModel
-                {
-                    Id = u.Id,
-                    Name = u.Name,
-                    Role = u.Role
-                })
-                .ToListAsync();
-        }
-
-        private bool ActivityExists(int id)
-        {
-            return _context.Activities.Any(e => e.Id == id);
-        }
-
+        // POST: Activities/JoinActivity
         [HttpPost]
         public async Task<IActionResult> JoinActivity(int id)
         {
@@ -238,10 +233,13 @@ namespace Studievereniging.Controllers
                 return NotFound();
             }
 
-            // TODO: Replace this with the actual logged-in user ID once authentication is implemented
-            var userId = 1; // Temporary: Using a hardcoded user ID
-            var user = await _context.Users.FindAsync(userId);
+            var userId = await GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("User must be logged in to join an activity.");
+            }
 
+            var user = await _context.Users.FindAsync(userId);
             if (user == null)
             {
                 return NotFound("User not found");
@@ -271,6 +269,7 @@ namespace Studievereniging.Controllers
             return RedirectToAction(nameof(Details), new { id = activity.Id });
         }
 
+        // POST: Activities/LeaveActivity
         [HttpPost]
         public async Task<IActionResult> LeaveActivity(int id)
         {
@@ -283,10 +282,13 @@ namespace Studievereniging.Controllers
                 return NotFound();
             }
 
-            // TODO: Replace this with the actual logged-in user ID once authentication is implemented
-            var userId = 1; // Temporary: Using a hardcoded user ID
-            var user = await _context.Users.FindAsync(userId);
+            var userId = await GetCurrentUserId();
+            if (userId == null)
+            {
+                return Unauthorized("User must be logged in to leave an activity.");
+            }
 
+            var user = await _context.Users.FindAsync(userId);
             if (user == null)
             {
                 return NotFound("User not found");
@@ -304,47 +306,49 @@ namespace Studievereniging.Controllers
             return RedirectToAction(nameof(Details), new { id = activity.Id });
         }
 
-        // GET: Activities/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        // GET: Activities/Suggestions
+        public IActionResult Suggestions()
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var activity = await _context.Activities
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (activity == null)
-            {
-                return NotFound();
-            }
-
-            return View(activity);
+            return View(ActivitySuggestions);
         }
 
-        // POST: Activities/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        // GET: Activities/SuggestActivity
+        public IActionResult SuggestActivity()
         {
-            var activity = await _context.Activities
-                .Include(a => a.Participants)
-                .Include(a => a.Organisers)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            
-            if (activity == null)
+            return View();
+        }
+
+        // POST: Activities/SuggestActivity
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SuggestActivity(string suggestionText)
+        {
+            if (string.IsNullOrWhiteSpace(suggestionText))
             {
-                return NotFound();
+                return BadRequest("Suggestion cannot be empty.");
             }
 
-            // Clear relationships first
-            activity.Participants.Clear();
-            activity.Organisers.Clear();
-            
-            _context.Activities.Remove(activity);
-            await _context.SaveChangesAsync();
-            
-            return RedirectToAction(nameof(Index));
+            // Voeg de suggestie toe aan de in-memory lijst
+            ActivitySuggestions.Add(suggestionText);
+
+            return RedirectToAction(nameof(Suggestions));
+        }
+
+        private async Task<List<UserSelectViewModel>> GetAvailableOrganizers()
+        {
+            return await _context.Users
+                .Select(u => new UserSelectViewModel
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Role = u.Role
+                })
+                .ToListAsync();
+        }
+
+        private bool ActivityExists(int id)
+        {
+            return _context.Activities.Any(e => e.Id == id);
         }
     }
 }
