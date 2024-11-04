@@ -1,14 +1,18 @@
 @model Studievereniging.Models.Product
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Studievereniging.Models.ApplicationUser> UserManager
 
 @{
-    ViewData["Title"] = Model?.Id == 0 ? "Create Product" : "Edit Product";
+    ViewData["Title"] = "Create Product";
+    var user = await UserManager.GetUserAsync(User);
+    var isAdmin = user != null && await UserManager.IsInRoleAsync(user, "Admin");
 }
 
 <div class="container py-4">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-action="Index">Products</a></li>
-            <li class="breadcrumb-item active">@(Model?.Id == 0 ? "Create" : "Edit")</li>
+            <li class="breadcrumb-item active">Create</li>
         </ol>
     </nav>
 
@@ -16,24 +20,19 @@
         <div class="col-md-8">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <h2 class="card-title mb-4">@(Model?.Id == 0 ? "Create Product" : "Edit Product")</h2>
+                    <h2 class="card-title mb-4">Create Product</h2>
 
-                    <form asp-action="@(Model?.Id == 0 ? "Create" : "Edit")">
+                    <form asp-action="Create">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                         
-                        @if (Model?.Id != 0)
-                        {
-                            <input type="hidden" asp-for="Id" />
-                        }
-
                         <div class="mb-3">
-                            <label asp-for="Name" class="form-label"></label>
+                            <label asp-for="Name" class="form-label">Name</label>
                             <input asp-for="Name" class="form-control" />
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Price" class="form-label"></label>
+                            <label asp-for="Price" class="form-label">Price</label>
                             <div class="input-group">
                                 <span class="input-group-text">€</span>
                                 <input asp-for="Price" class="form-control" type="number" step="0.01" />
@@ -41,19 +40,24 @@
                             <span asp-validation-for="Price" class="text-danger"></span>
                         </div>
 
-                        <div class="mb-4">
-                            <label asp-for="Image" class="form-label"></label>
-                            <input asp-for="Image" class="form-control" />
-                            <span asp-validation-for="Image" class="text-danger"></span>
-                            <small class="text-muted">Enter the URL of the product image</small>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label">Description</label>
+                            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
                         </div>
 
-                        <div class="btn-group">
+                        <div class="mb-4">
+                            <label asp-for="Image" class="form-label">Image URL</label>
+                            <input asp-for="Image" class="form-control" />
+                            <span asp-validation-for="Image" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-save"></i> Save
+                                <i class="bi bi-check-lg"></i> Create Product
                             </button>
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="bi bi-x"></i> Cancel
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-lg"></i> Cancel
                             </a>
                         </div>
                     </form>
