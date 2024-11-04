@@ -12,8 +12,8 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    [Migration("20241101105622_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20241104084724_LoginDatabaseAdd")]
+    partial class LoginDatabaseAdd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -234,24 +234,9 @@ namespace Studievereniging.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserId2")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AdminId");
-
-                    b.HasIndex("UserId");
-
-                    b.HasIndex("UserId1");
-
-                    b.HasIndex("UserId2");
 
                     b.ToTable("Activities");
                 });
@@ -337,18 +322,13 @@ namespace Studievereniging.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
+                    b.Property<string>("CustomerId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ApplicationUserId");
 
                     b.HasIndex("CustomerId");
 
@@ -402,27 +382,6 @@ namespace Studievereniging.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
-                });
-
-            modelBuilder.Entity("Studievereniging.Models.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("ActivityApplicationUser", b =>
@@ -513,28 +472,12 @@ namespace Studievereniging.Migrations
                         .HasForeignKey("AdminId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("Studievereniging.Models.User", null)
-                        .WithMany("Activities")
-                        .HasForeignKey("UserId");
-
-                    b.HasOne("Studievereniging.Models.User", null)
-                        .WithMany("OrganiserActivities")
-                        .HasForeignKey("UserId1");
-
-                    b.HasOne("Studievereniging.Models.User", null)
-                        .WithMany("ParticipantActivities")
-                        .HasForeignKey("UserId2");
-
                     b.Navigation("Admin");
                 });
 
             modelBuilder.Entity("Studievereniging.Models.Order", b =>
                 {
-                    b.HasOne("Studievereniging.Models.ApplicationUser", null)
-                        .WithMany("Orders")
-                        .HasForeignKey("ApplicationUserId");
-
-                    b.HasOne("Studievereniging.Models.User", "user")
+                    b.HasOne("Studievereniging.Models.ApplicationUser", "user")
                         .WithMany("Orders")
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -544,7 +487,7 @@ namespace Studievereniging.Migrations
 
             modelBuilder.Entity("Studievereniging.Models.OrderLine", b =>
                 {
-                    b.HasOne("Studievereniging.Models.Order", null)
+                    b.HasOne("Studievereniging.Models.Order", "Order")
                         .WithMany("OrderLines")
                         .HasForeignKey("OrderId");
 
@@ -553,6 +496,8 @@ namespace Studievereniging.Migrations
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -567,17 +512,6 @@ namespace Studievereniging.Migrations
             modelBuilder.Entity("Studievereniging.Models.Order", b =>
                 {
                     b.Navigation("OrderLines");
-                });
-
-            modelBuilder.Entity("Studievereniging.Models.User", b =>
-                {
-                    b.Navigation("Activities");
-
-                    b.Navigation("Orders");
-
-                    b.Navigation("OrganiserActivities");
-
-                    b.Navigation("ParticipantActivities");
                 });
 #pragma warning restore 612, 618
         }
