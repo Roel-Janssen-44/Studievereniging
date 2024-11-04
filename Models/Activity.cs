@@ -25,12 +25,12 @@ namespace Studievereniging.Models
         public bool IsPublic { get; set; } = true; 
 
         [AllowNull]
-        public int? AdminId { get; set; }
+        public string? AdminId { get; set; }
         
         [AllowNull]
-        public User? Admin { get; set; }
+        public ApplicationUser? Admin { get; set; }
 
-        public List<User> Organisers { get; set; } = new List<User>();
-        public List<User> Participants { get; set; } = new List<User>();
+        public List<ApplicationUser> Organisers { get; set; } = new List<ApplicationUser>();
+        public List<ApplicationUser> Participants { get; set; } = new List<ApplicationUser>();
     }
 }

@@ -15,10 +15,10 @@ namespace Studievereniging.Models
         public ICollection<OrderLine>? OrderLines { get; set; }
 
         [AllowNull]
-        public int? CustomerId { get; set; }
+        public string? CustomerId { get; set; }
 
         [AllowNull]
-        public virtual User? user { get; set; }
+        public virtual ApplicationUser? user { get; set; }
 
     }
 }

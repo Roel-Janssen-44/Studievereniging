@@ -7,19 +7,23 @@ using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
 using Studievereniging.Models.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace Studievereniging.Controllers
 {
     public class ActivitiesController : Controller
     {
         private readonly ApplicationData _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         // In-memory lijst om suggesties tijdelijk op te slaan
         private static List<string> ActivitySuggestions = new List<string>();
 
         public ActivitiesController(ApplicationData context)
+        public ActivitiesController(ApplicationData context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Activities
@@ -80,5 +84,33 @@ namespace Studievereniging.Controllers
 
             return RedirectToAction(nameof(Suggestions));
         }
+
+        public async Task<IActionResult> AddOrganiser(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            
+            // Add your organizer logic here
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Title,Description,StartTime,EndTime,Location,MaxParticipants")] Activity activity)
+        {
+            if (ModelState.IsValid)
+            {
+                var currentUser = await _userManager.GetUserAsync(User);
+                activity.AdminId = currentUser?.Id;  // Use Id instead of converting to int
+                activity.Admin = currentUser;
+                // ... rest of the method
+            }
+            return View(activity);
+        }
+
+        // Update other methods similarly
     }
 }
