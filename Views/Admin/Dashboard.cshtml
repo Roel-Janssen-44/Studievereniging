@@ -1,0 +1,105 @@
+@model Studievereniging.Models.ViewModels.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container py-4">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Products</h5>
+                    <p class="card-text display-4">@Model.TotalProducts</p>
+                    <a asp-controller="Products" asp-action="Index" class="text-white">View All Products</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Orders</h5>
+                    <p class="card-text display-4">@Model.TotalOrders</p>
+                    <a asp-controller="Orders" asp-action="Index" class="text-white">View All Orders</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text display-4">@Model.TotalUsers</p>
+                    <a asp-controller="Users" asp-action="Index" class="text-white">Manage Users</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Management -->
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Products Management</h5>
+            <a asp-controller="Products" asp-action="Create" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg"></i> Add New Product
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in Model.Products)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(product.Image))
+                                    {
+                                        <img src="@product.Image" alt="@product.Name" style="height: 40px; width: 40px; object-fit: cover;">
+                                    }
+                                    else
+                                    {
+                                        <i class="bi bi-image text-muted"></i>
+                                    }
+                                </td>
+                                <td>@product.Name</td>
+                                <td>€@product.Price.ToString("F2")</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(product.Description))
+                                    {
+                                        @(product.Description.Length > 50 ? product.Description[..47] + "..." : product.Description)
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a asp-controller="Products" asp-action="Edit" asp-route-id="@product.Id" 
+                                           class="btn btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-controller="Products" asp-action="Details" asp-route-id="@product.Id" 
+                                           class="btn btn-outline-primary">
+                                            <i class="bi bi-info-circle"></i>
+                                        </a>
+                                        <a asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id" 
+                                           class="btn btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> 
