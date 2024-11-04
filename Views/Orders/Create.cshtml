@@ -1,93 +1,173 @@
 @model Studievereniging.Models.Order
 
 @{
-    ViewData["Title"] = "Order maken";
+    ViewData["Title"] = "New Order";
 }
 
+<div class="container py-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Orders</a></li>
+            <li class="breadcrumb-item active">New Order</li>
+        </ol>
+    </nav>
 
-<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Create New Order</h2>
 
-    <!--
+                    <form asp-action="Create" id="orderForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-   <h1>Create</h1>
+                        <div id="orderLines" class="mb-4">
+                            <!-- Order lines will be added here -->
+                        </div>
 
-   <h3>Products</h3>
-   <select name="OrderLines[0].ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
-    -->
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-outline-secondary" id="addOrderLine">
+                                <i class="bi bi-plus-lg"></i> Add Product
+                            </button>
+                        </div>
 
- 
-
-    <div>
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <!-- OrderLines Section -->
-            <h4 style="margin-top: 50px; margin-bottom: 20px;">Winkelmandje</h4>
-            <div id="orderLines">
-                <!-- Order lines will be appended here -->
-            </div>
-
-            <!-- Hidden OrderLine Template -->
-            <div id="orderLineTemplate" class="order-line-template form-group" style="display: none; flex-direction: row; gap: 20px; margin-bottom: 10px;">
-                <div class="form-group">
-                    <select name="OrderLines[0].ProductId" class="form-control" asp-items="ViewBag.ProductId"></select>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">Total: €<span id="orderTotal">0.00</span></h4>
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-cart-check"></i> Place Order
+                                </button>
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-x"></i> Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-                <div class="form-group">
-                    <input name="OrderLines[0].Amount" class="form-control" placeholder="Aantal" />
+            </div>
+        </div>
+
+        <!-- Product List Panel -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="card-title mb-3">Available Products</h4>
+                    <div class="list-group">
+                        @foreach (var product in ViewBag.Products)
+                        {
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-0">@product.Name</h6>
+                                        <small class="text-muted">€@product.Price.ToString("F2")</small>
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-primary add-product" 
+                                            data-product-id="@product.Id" 
+                                            data-product-name="@product.Name" 
+                                            data-product-price="@product.Price">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
-                <button type="button" class="btn btn-danger remove-order-line">Remove</button>
             </div>
-
-            <button type="button" class="btn btn-secondary" id="addOrderLine" style="margin-top: 10px;">Add other product</button>
-            <br /><br />
-
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
+<!-- Template for order line -->
+<template id="orderLineTemplate">
+    <div class="order-line card mb-3">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col">
+                    <select name="OrderLines[{index}].ProductId" class="form-select product-select" required>
+                        <option value="">Select a product</option>
+                        @foreach (var product in ViewBag.Products)
+                        {
+                            <option value="@product.Id" data-price="@product.Price">@product.Name - €@product.Price</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-3">
+                    <div class="input-group">
+                        <input type="number" name="OrderLines[{index}].Amount" class="form-control amount-input" 
+                               value="1" min="1" required />
+                        <button type="button" class="btn btn-outline-danger remove-line">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const orderLines = document.getElementById('orderLines');
+            const template = document.getElementById('orderLineTemplate');
+            let lineCount = 0;
 
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const orderLinesDiv = document.getElementById('orderLines');
-        const orderLineTemplate = document.getElementById('orderLineTemplate');
+            function addOrderLine(productId = '', amount = 1) {
+                const content = template.content.cloneNode(true);
+                const line = content.querySelector('.order-line');
+                
+                // Update indices
+                line.innerHTML = line.innerHTML.replace(/{index}/g, lineCount++);
+                
+                // Set initial values if provided
+                if (productId) {
+                    const select = line.querySelector('.product-select');
+                    select.value = productId;
+                }
+                
+                const amountInput = line.querySelector('.amount-input');
+                amountInput.value = amount;
 
-        document.getElementById('addOrderLine').addEventListener('click', function() {
-            // Ensure the template exists before attempting to clone it
-            if (orderLineTemplate) {
-                const newOrderLine = orderLineTemplate.cloneNode(true);
-                const index = orderLinesDiv.children.length;
-
-                newOrderLine.querySelectorAll('select, input').forEach(function(input) {
-                    input.name = input.name.replace('[0]', `[${index}]`);
+                // Add event listeners
+                line.querySelector('.remove-line').addEventListener('click', function() {
+                    line.remove();
+                    updateTotal();
                 });
 
-                newOrderLine.style.display = "flex";
-                newOrderLine.classList.remove('order-line-template');
-                orderLinesDiv.appendChild(newOrderLine);
-            } else {
-                console.error("Order line template not found.");
+                line.querySelector('.product-select').addEventListener('change', updateTotal);
+                line.querySelector('.amount-input').addEventListener('input', updateTotal);
+
+                orderLines.appendChild(line);
+                updateTotal();
             }
-        });
 
-        orderLinesDiv.addEventListener('click', function(event) {
-            if (event.target.classList.contains('remove-order-line')) {
-                if (orderLinesDiv.children.length > 1) {
-                    event.target.closest('.form-group').remove();
-                } else {
-                    alert("You must have at least one order line.");
-                }
+            function updateTotal() {
+                let total = 0;
+                document.querySelectorAll('.order-line').forEach(line => {
+                    const select = line.querySelector('.product-select');
+                    const amount = line.querySelector('.amount-input').value;
+                    const option = select.selectedOptions[0];
+                    if (option) {
+                        const price = option.dataset.price;
+                        total += price * amount;
+                    }
+                });
+                document.getElementById('orderTotal').textContent = total.toFixed(2);
             }
+
+            // Add product button
+            document.getElementById('addOrderLine').addEventListener('click', () => addOrderLine());
+
+            // Quick add buttons
+            document.querySelectorAll('.add-product').forEach(button => {
+                button.addEventListener('click', function() {
+                    addOrderLine(this.dataset.productId);
+                });
+            });
+
+            // Add initial order line
+            addOrderLine();
         });
-
-        // Add the first order line on load
-        document.getElementById('addOrderLine').click();
-    });
-
-</script>
+    </script>
+}
