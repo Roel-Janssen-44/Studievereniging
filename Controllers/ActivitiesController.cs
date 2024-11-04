@@ -19,7 +19,7 @@ namespace Studievereniging.Controllers
         // In-memory lijst om suggesties tijdelijk op te slaan
         private static List<string> ActivitySuggestions = new List<string>();
 
-        public ActivitiesController(ApplicationData context)
+        public ActivitiesController(ApplicationData context);
         public ActivitiesController(ApplicationData context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
