@@ -1,0 +1,23 @@
+﻿@model IEnumerable<string>
+
+@{
+    ViewData["Title"] = "Activity Suggestions";
+}
+
+<h1>Activity Suggestions</h1>
+
+<ul class="list-group">
+    @if (Model.Any())
+    {
+        @foreach (var suggestion in Model)
+        {
+            <li class="list-group-item">@suggestion</li>
+        }
+    }
+    else
+    {
+        <li class="list-group-item text-muted">No suggestions available</li>
+    }
+</ul>
+
+<a asp-action="SuggestActivity" class="btn btn-primary mt-4">Suggest New Activity</a>
