@@ -358,5 +358,17 @@ namespace Studievereniging.Controllers
         {
             return _context.Activities.Any(e => e.Id == id);
         }
+
+        [HttpGet("api/activities/past")]
+        public async Task<IActionResult> GetPastActivities()
+        {
+            var pastActivities = await _context.Activities
+                .Where(a => a.EndDate < DateTime.Now) // Filter for past activities
+                .OrderByDescending(a => a.EndDate) // Sort by most recent past activities
+                .ToListAsync();
+
+            return Ok(pastActivities);
+        }
+
     }
 }
