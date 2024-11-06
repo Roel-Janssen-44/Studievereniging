@@ -14,7 +14,7 @@
 <div class="container py-3">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-2">
-            <li class="breadcrumb-item"><a asp-action="Index">Activities</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Activiteiten</a></li>
             <li class="breadcrumb-item active">@Model.Name</li>
         </ol>
     </nav>
@@ -119,7 +119,7 @@
                         <a asp-controller="Users" asp-action="Login" 
                            asp-route-returnUrl="@Url.Action("Details", "Activities", new { id = Model.Id })" 
                            class="btn btn-primary">
-                            Login to Join Activity
+                            Login om deel te nemen
                         </a>
                     }
                    

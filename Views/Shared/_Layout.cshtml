@@ -130,12 +130,12 @@
                         <!-- Activities Dropdown - Visible to all -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-calendar-event"></i> Activities
+                                <i class="bi bi-calendar-event"></i> Activiteiten
                             </a>
                             <ul class="dropdown-menu dropdown-menu-animated">
                                 <li>
                                     <a class="dropdown-item" asp-controller="Activities" asp-action="Index">
-                                        <i class="bi bi-list"></i> All Activities
+                                        <i class="bi bi-list"></i> Alle Activiteiten
                                     </a>
                                 </li>
                                 @if (User.Identity?.IsAuthenticated ?? false)
@@ -143,7 +143,7 @@
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item" href="#">
-                                            <i class="bi bi-person-check"></i> My Activities
+                                            <i class="bi bi-person-check"></i> Mijn Activiteiten
                                         </a>
                                     </li>
                                 }
@@ -153,7 +153,7 @@
                         <!-- Shop (Products) - Visible to all -->
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Products" asp-action="Index">
-                                <i class="bi bi-shop"></i> Shop
+                                <i class="bi bi-shop"></i> Winkel
                             </a>
                         </li>
 
@@ -180,22 +180,22 @@
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Activities" asp-action="Create">
-                                            <i class="bi bi-plus-lg"></i> Create Activity
+                                            <i class="bi bi-plus-lg"></i> Maak Activiteit
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Products" asp-action="Create">
-                                            <i class="bi bi-plus-lg"></i> Create Product
+                                            <i class="bi bi-plus-lg"></i> Maak Product
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Orders" asp-action="Index">
-                                            <i class="bi bi-list"></i> All Orders
+                                            <i class="bi bi-list"></i> Alle Bestellingen
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Users" asp-action="Index">
-                                            <i class="bi bi-people"></i> Manage Users
+                                            <i class="bi bi-people"></i> Beheer Users
                                         </a>
                                     </li>
                                 </ul>
@@ -206,7 +206,7 @@
                             <!-- Cart for authenticated users -->
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Cart" asp-action="Index">
-                                    <i class="bi bi-cart3"></i> Cart
+                                    <i class="bi bi-cart3"></i> Winkelwagen
                                 </a>
                             </li>
                             @* <!-- My Orders for authenticated users -->
@@ -229,14 +229,14 @@
                                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-animated">
                                     <li>
                                         <a class="dropdown-item" asp-controller="Users" asp-action="Details" asp-route-id="@user?.Id">
-                                            <i class="bi bi-person"></i> My Profile
+                                            <i class="bi bi-person"></i> Mijn Profiel
                                         </a>
                                     </li>
                                     @if (isAdmin)
                                     {
                                         <li>
                                             <a class="dropdown-item" asp-controller="Users" asp-action="Index">
-                                                <i class="bi bi-people"></i> Manage Users
+                                                <i class="bi bi-people"></i> Beheer Users
                                             </a>
                                         </li>
                                     }
