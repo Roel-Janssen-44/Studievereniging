@@ -11,10 +11,11 @@ namespace Studievereniging.Models
         [Required]
         public string Name { get; set; } = string.Empty;
 
-
         [Required]
         public double Price { get; set; }
 
+        [AllowNull]
+        public string? Description { get; set; }
 
         [AllowNull]
         public string? Image { get; set; }

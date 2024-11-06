@@ -12,6 +12,7 @@ using Studievereniging.Data;
 using Studievereniging.Models;
 using Studievereniging.Models.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Studievereniging.Controllers
 {
@@ -101,6 +102,7 @@ namespace Studievereniging.Controllers
         }
 
         // GET: Users 
+        [Authorize(Roles = "Admin,Guest")]  // Temporarily allow Guest role
         public async Task<IActionResult> Index()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -161,6 +163,7 @@ namespace Studievereniging.Controllers
         }
 
         // GET: Users/Edit/5
+        [Authorize(Roles = "Admin,Guest")]  // Temporarily allow Guest role
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -186,10 +189,9 @@ namespace Studievereniging.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin,Guest")]  // Temporarily allow Guest role
         public async Task<IActionResult> Edit(string id, UserEditViewModel model)
         {
             if (id != model.Id)
@@ -207,15 +209,16 @@ namespace Studievereniging.Controllers
 
                 user.UserName = model.UserName;
                 user.Email = model.Email;
+                user.Role = model.Role;
 
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    // Remove all existing roles
+                    // Remove existing roles
                     var currentRoles = await _userManager.GetRolesAsync(user);
                     await _userManager.RemoveFromRolesAsync(user, currentRoles);
 
-                    // Add the new role
+                    // Add new role
                     await _userManager.AddToRoleAsync(user, model.Role);
 
                     return RedirectToAction(nameof(Index));

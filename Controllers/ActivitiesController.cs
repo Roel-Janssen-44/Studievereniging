@@ -16,9 +16,6 @@ namespace Studievereniging.Controllers
         private readonly ApplicationData _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        // In-memory lijst om suggesties tijdelijk op te slaan
-        private static List<string> ActivitySuggestions = new List<string>();
-
         public ActivitiesController(ApplicationData context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -222,8 +219,15 @@ namespace Studievereniging.Controllers
 
         // POST: Activities/JoinActivity
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> JoinActivity(int id)
         {
+            // Check if user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Users", new { returnUrl = Url.Action("Details", "Activities", new { id }) });
+            }
+
             var activity = await _context.Activities
                 .Include(a => a.Participants)
                 .FirstOrDefaultAsync(a => a.Id == id);
@@ -233,46 +237,51 @@ namespace Studievereniging.Controllers
                 return NotFound();
             }
 
-            var userId = await GetCurrentUserId();
-            if (userId == null)
-            {
-                return Unauthorized("User must be logged in to join an activity.");
-            }
-
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return NotFound("User not found");
             }
 
             // Check if user is already a participant
-            if (activity.Participants.Any(p => p.Id == userId))
+            if (activity.Participants.Any(p => p.Id == user.Id))
             {
-                return BadRequest("You are already participating in this activity");
+                TempData["Error"] = "You are already participating in this activity";
+                return RedirectToAction(nameof(Details), new { id = activity.Id });
             }
 
             // Check if activity is full
             if (activity.MaxParticipants.HasValue && activity.Participants.Count >= activity.MaxParticipants.Value)
             {
-                return BadRequest("This activity is full");
+                TempData["Error"] = "This activity is full";
+                return RedirectToAction(nameof(Details), new { id = activity.Id });
             }
 
             // Check if registration deadline has passed
-            if (activity.RegistrationDeadline.HasValue && activity.RegistrationDeadline.Value < DateTime.Now)
+            if (activity.RegistrationDeadline.HasValue && DateTime.Now > activity.RegistrationDeadline.Value)
             {
-                return BadRequest("Registration deadline has passed");
+                TempData["Error"] = "Registration deadline has passed";
+                return RedirectToAction(nameof(Details), new { id = activity.Id });
             }
 
             activity.Participants.Add(user);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Successfully joined the activity!";
             return RedirectToAction(nameof(Details), new { id = activity.Id });
         }
 
         // POST: Activities/LeaveActivity
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> LeaveActivity(int id)
         {
+            // Check if user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Login", "Users");
+            }
+
             var activity = await _context.Activities
                 .Include(a => a.Participants)
                 .FirstOrDefaultAsync(a => a.Id == id);
@@ -282,34 +291,34 @@ namespace Studievereniging.Controllers
                 return NotFound();
             }
 
-            var userId = await GetCurrentUserId();
-            if (userId == null)
-            {
-                return Unauthorized("User must be logged in to leave an activity.");
-            }
-
-            var user = await _context.Users.FindAsync(userId);
+            var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return NotFound("User not found");
             }
 
             // Check if user is a participant
-            if (!activity.Participants.Any(p => p.Id == userId))
+            if (!activity.Participants.Any(p => p.Id == user.Id))
             {
-                return BadRequest("You are not participating in this activity");
+                TempData["Error"] = "You are not participating in this activity";
+                return RedirectToAction(nameof(Details), new { id = activity.Id });
             }
 
             activity.Participants.Remove(user);
             await _context.SaveChangesAsync();
 
+            TempData["Success"] = "Successfully left the activity";
             return RedirectToAction(nameof(Details), new { id = activity.Id });
         }
 
         // GET: Activities/Suggestions
-        public IActionResult Suggestions()
+        public async Task<IActionResult> Suggestions()
         {
-            return View(ActivitySuggestions);
+            var suggestions = await _context.Suggestions
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync();
+
+            return View(suggestions);
         }
 
         // GET: Activities/SuggestActivity
@@ -321,16 +330,24 @@ namespace Studievereniging.Controllers
         // POST: Activities/SuggestActivity
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SuggestActivity(string suggestionText)
+        public async Task<IActionResult> SuggestActivity(string suggestionText)
         {
             if (string.IsNullOrWhiteSpace(suggestionText))
             {
-                return BadRequest("Suggestion cannot be empty.");
+                ModelState.AddModelError(string.Empty, "Suggestie mag niet leeg zijn.");
+                return View();
             }
 
-            // Voeg de suggestie toe aan de in-memory lijst
-            ActivitySuggestions.Add(suggestionText);
+            // Sla de suggestie op in de database
+            var suggestion = new Suggestions
+            {
+                Text = suggestionText
+            };
 
+            _context.Suggestions.Add(suggestion);
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Bedankt voor je suggestie!";
             return RedirectToAction(nameof(Suggestions));
         }
 
@@ -350,5 +367,17 @@ namespace Studievereniging.Controllers
         {
             return _context.Activities.Any(e => e.Id == id);
         }
+
+        [HttpGet("api/activities/past")]
+        public async Task<IActionResult> GetPastActivities()
+        {
+            var pastActivities = await _context.Activities
+                .Where(a => a.EndDate < DateTime.Now) // Filter for past activities
+                .OrderByDescending(a => a.EndDate) // Sort by most recent past activities
+                .ToListAsync();
+
+            return Ok(pastActivities);
+        }
+
     }
 }

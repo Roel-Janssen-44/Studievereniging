@@ -1,13 +1,31 @@
 ﻿@{
-    ViewData["Title"] = "Suggest a New Activity";
+    ViewData["Title"] = "Suggesteer een Activiteit";
 }
 
-<h1>Suggest a New Activity</h1>
+<div class="container mt-5">
+    <h2>Suggestie voor een Activiteit</h2>
+    <p>Heb je een idee voor een nieuwe activiteit? Laat het ons weten!</p>
 
-<form asp-action="SuggestActivity" method="post">
-    <div class="mb-3">
-        <label for="suggestionText" class="form-label">Activity Suggestion</label>
-        <textarea id="suggestionText" name="suggestionText" class="form-control" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-primary">Submit Suggestion</button>
-</form>
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["Message"]
+        </div>
+    }
+
+    <form asp-action="SuggestActivity" method="post">
+        <div class="mb-3">
+            <label for="suggestionText" class="form-label">Suggestie</label>
+            <textarea class="form-control" id="suggestionText" name="suggestionText" rows="4"
+                      placeholder="Beschrijf je idee voor een activiteit..."></textarea>
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <span class="text-danger">Suggestie mag niet leeg zijn.</span>
+            }
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> Suggestie Versturen
+        </button>
+        <a asp-action="Suggestions" class="btn btn-primary">Bekijk Alle Suggesties</a>
+    </form>
+</div>
