@@ -367,4 +367,7 @@ appsettings.Development.json
 ## Add to existing .gitignore or create new file
 appsettings.Development.json
 .DS_Store
+<<<<<<< HEAD
+=======
 .DS_Store
+>>>>>>> origin/master
