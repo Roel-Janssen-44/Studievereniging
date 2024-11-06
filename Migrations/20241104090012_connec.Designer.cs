@@ -12,13 +12,8 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-<<<<<<<< HEAD:Migrations/20241101162350_UserAuthentication.Designer.cs
-    [Migration("20241101162350_UserAuthentication")]
-    partial class UserAuthentication
-========
-    [Migration("20241104084724_LoginDatabaseAdd")]
-    partial class LoginDatabaseAdd
->>>>>>>> origin/master:Migrations/20241104084724_LoginDatabaseAdd.Designer.cs
+    [Migration("20241104090012_connec")]
+    partial class connec
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

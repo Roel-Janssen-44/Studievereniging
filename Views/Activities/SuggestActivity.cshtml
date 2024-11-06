@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "Activiteit Suggesties";
+}
+
+<h1>Suggesties voor activiteiten</h1>
+
+<form asp-action="SuggestActivity" method="post">
+    <div class="mb-3">
+        <textarea id="suggestionText" name="suggestionText" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Suggestie Toevoegen</button>
+</form>
