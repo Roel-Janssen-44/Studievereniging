@@ -15,14 +15,25 @@
 
     <form asp-action="SuggestActivity" method="post">
         <div class="mb-3">
+            <label for="name" class="form-label">Naam</label>
+            <input type="text" class="form-control" id="name" name="name" required placeholder="Jouw naam...">
+        </div>
+
+        <div class="mb-3">
+            <label for="email" class="form-label">E-mailadres</label>
+            <input type="email" class="form-control" id="email" name="email" required placeholder="Jouw e-mailadres...">
+        </div>
+
+        <div class="mb-3">
             <label for="suggestionText" class="form-label">Suggestie</label>
             <textarea class="form-control" id="suggestionText" name="suggestionText" rows="4"
-                      placeholder="Beschrijf je idee voor een activiteit..."></textarea>
+                      placeholder="Beschrijf je idee voor een activiteit..." required></textarea>
             @if (!ViewData.ModelState.IsValid)
             {
                 <span class="text-danger">Suggestie mag niet leeg zijn.</span>
             }
         </div>
+
         <button type="submit" class="btn btn-primary">
             <i class="bi bi-check-circle"></i> Suggestie Versturen
         </button>

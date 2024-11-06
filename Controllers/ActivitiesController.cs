@@ -330,18 +330,21 @@ namespace Studievereniging.Controllers
         // POST: Activities/SuggestActivity
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SuggestActivity(string suggestionText)
+        public async Task<IActionResult> SuggestActivity(string name, string email, string suggestionText)
         {
-            if (string.IsNullOrWhiteSpace(suggestionText))
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(suggestionText))
             {
-                ModelState.AddModelError(string.Empty, "Suggestie mag niet leeg zijn.");
+                ModelState.AddModelError(string.Empty, "Alle velden zijn verplicht.");
                 return View();
             }
 
             // Sla de suggestie op in de database
             var suggestion = new Suggestions
             {
-                Text = suggestionText
+                Name = name,
+                Email = email,
+                Text = suggestionText,
+                CreatedAt = DateTime.Now
             };
 
             _context.Suggestions.Add(suggestion);
@@ -378,6 +381,5 @@ namespace Studievereniging.Controllers
 
             return Ok(pastActivities);
         }
-
     }
 }
