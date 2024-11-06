@@ -16,6 +16,7 @@ namespace Studievereniging.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderLine> OrderLines { get; set; }
         public DbSet<Activity> Activities { get; set; }
+        public DbSet<Suggestions> Suggestions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
