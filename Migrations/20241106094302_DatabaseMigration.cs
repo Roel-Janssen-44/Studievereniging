@@ -3,14 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Studievereniging.Migrations
 {
     /// <inheritdoc />
-<<<<<<<< HEAD:Migrations/20241101162350_UserAuthentication.cs
-    public partial class UserAuthentication : Migration
-========
-    public partial class LoginDatabaseAdd : Migration
->>>>>>>> origin/master:Migrations/20241104084724_LoginDatabaseAdd.cs
+    public partial class DatabaseMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -23,6 +21,7 @@ namespace Studievereniging.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -299,6 +298,26 @@ namespace Studievereniging.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "Activities",
+                columns: new[] { "Id", "AdminId", "Calendar", "Category", "EndDate", "Image", "IsPublic", "Location", "MaxParticipants", "Name", "Price", "RegistrationDeadline", "StartDate" },
+                values: new object[,]
+                {
+                    { 1, null, null, "Social", new DateTime(2024, 11, 18, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9457), "/IMG/spellenmiddag.jpg", true, "B2.104", 100, "Spellen middag", 0.0, new DateTime(2024, 11, 14, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9462), new DateTime(2024, 11, 16, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9409) },
+                    { 2, null, null, "Education", new DateTime(2024, 11, 11, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9469), "/IMG/workshopcoderen.jpg", true, "B3.305", 50, "Workshop coderen", 5.0, new DateTime(2024, 11, 8, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9471), new DateTime(2024, 11, 11, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9468) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "Description", "Image", "Name", "Price" },
+                values: new object[,]
+                {
+                    { 1, "Victuz lidmaatschap", "/IMG/wordlid.png", "Lidmaatschap", 5.9900000000000002 },
+                    { 2, "Comfortabel katoenen T-shirt", "/IMG/shirt.jpg", "T-Shirt", 15.99 },
+                    { 3, "Koffiemok met logo", "/IMG/mok.jpg", "Mok", 9.9900000000000002 },
+                    { 4, "Sticker met verenigingslogo", "/IMG/sticker.png", "Sticker", 4.9500000000000002 }
                 });
 
             migrationBuilder.CreateIndex(

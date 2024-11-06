@@ -128,27 +128,30 @@
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto">
                         <!-- Activities Dropdown - Visible to all -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                <i class="bi bi-calendar-event"></i> Activities
+                        @if (!User.Identity?.IsAuthenticated ?? false)
+                        {
+                        <li class="nav-item">
+                             <a class="nav-link" asp-controller="Activities" asp-action="Index">
+                                <i class="bi bi-list"></i> All Activities
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-animated">
-                                <li>
-                                    <a class="dropdown-item" asp-controller="Activities" asp-action="Index">
-                                        <i class="bi bi-list"></i> All Activities
-                                    </a>
-                                </li>
-                                @if (User.Identity?.IsAuthenticated ?? false)
-                                {
+                        </li>
+                        }
+                        @if (User.Identity?.IsAuthenticated ?? false)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                    <i class="bi bi-calendar-event"></i> Activities
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-animated">
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
-                                        <a class="dropdown-item" href="#">
+                                        <a class="dropdown-item" asp-controller="Activities" asp-action="Index">
                                             <i class="bi bi-person-check"></i> My Activities
                                         </a>
                                     </li>
-                                }
-                            </ul>
-                        </li>
+                                </ul>
+                            </li>
+                        }
 
                         <!-- Shop (Products) - Visible to all -->
                         <li class="nav-item">
