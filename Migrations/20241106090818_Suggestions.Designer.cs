@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Studievereniging.Data;
 
@@ -11,9 +12,11 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    partial class ApplicationDataModelSnapshot : ModelSnapshot
+    [Migration("20241106090818_Suggestions")]
+    partial class Suggestions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,36 +239,6 @@ namespace Studievereniging.Migrations
                     b.HasIndex("AdminId");
 
                     b.ToTable("Activities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Category = "Social",
-                            EndDate = new DateTime(2024, 11, 18, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9457),
-                            Image = "/IMG/spellenmiddag.jpg",
-                            IsPublic = true,
-                            Location = "B2.104",
-                            MaxParticipants = 100,
-                            Name = "Spellen middag",
-                            Price = 0.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 14, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9462),
-                            StartDate = new DateTime(2024, 11, 16, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9409)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Category = "Education",
-                            EndDate = new DateTime(2024, 11, 11, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9469),
-                            Image = "/IMG/workshopcoderen.jpg",
-                            IsPublic = true,
-                            Location = "B3.305",
-                            MaxParticipants = 50,
-                            Name = "Workshop coderen",
-                            Price = 5.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 8, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9471),
-                            StartDate = new DateTime(2024, 11, 11, 10, 43, 1, 10, DateTimeKind.Local).AddTicks(9468)
-                        });
                 });
 
             modelBuilder.Entity("Studievereniging.Models.ApplicationUser", b =>
@@ -396,9 +369,6 @@ namespace Studievereniging.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
@@ -412,43 +382,9 @@ namespace Studievereniging.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Victuz lidmaatschap",
-                            Image = "/IMG/wordlid.png",
-                            Name = "Lidmaatschap",
-                            Price = 5.9900000000000002
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Comfortabel katoenen T-shirt",
-                            Image = "/IMG/shirt.jpg",
-                            Name = "T-Shirt",
-                            Price = 15.99
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Koffiemok met logo",
-                            Image = "/IMG/mok.jpg",
-                            Name = "Mok",
-                            Price = 9.9900000000000002
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Sticker met verenigingslogo",
-                            Image = "/IMG/sticker.png",
-                            Name = "Sticker",
-                            Price = 4.9500000000000002
-                        });
                 });
 
-            modelBuilder.Entity("Studievereniging.Models.Suggestions", b =>
+            modelBuilder.Entity("Studievereniging.Models.Suggestion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
