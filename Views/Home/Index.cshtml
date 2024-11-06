@@ -118,7 +118,6 @@
     <div class="container">
         <h2 class="text-center display-5 fw-bold mb-5">Komende Activiteiten</h2>
         <div id="upcomingActivities" class="row g-4">
-            <!-- This will be populated via JavaScript -->
             <div class="text-center">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -132,7 +131,6 @@
     <div class="container">
         <h2 class="text-center display-5 fw-bold mb-5">Gemiste Activiteiten</h2>
         <div id="pastActivities" class="row g-4">
-            <!-- This will be populated via JavaScript -->
             <div class="text-center">
                 <div class="spinner-border text-primary" role="status">
                     <span class="visually-hidden">Loading...</span>
@@ -152,6 +150,13 @@
                 container.innerHTML = activities.length ? activities.map(activity => `
                             <div class="col-md-4">
                                 <div class="card h-100 shadow-sm animate-card">
+                                    ${activity.image ? `
+                                    <img src="${activity.image}" class="card-img-top" alt="${activity.name}" style="height: 200px; object-fit: cover;">
+                                    ` : `
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="bi bi-calendar-event display-1 text-muted"></i>
+                                    </div>
+                                    `}
                                     <div class="card-body">
                                         <h5 class="card-title">${activity.name}</h5>
                                         <p class="card-text">
@@ -193,6 +198,13 @@
                 container.innerHTML = activities.length ? activities.map(activity => `
                             <div class="col-md-4">
                                 <div class="card h-100 shadow-sm animate-card">
+                                    ${activity.image ? `
+                                    <img src="${activity.image}" class="card-img-top" alt="${activity.name}" style="height: 200px; object-fit: cover;">
+                                    ` : `
+                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                        <i class="bi bi-calendar-event display-1 text-muted"></i>
+                                    </div>
+                                    `}
                                     <div class="card-body">
                                         <h5 class="card-title">${activity.name}</h5>
                                         <p class="card-text">

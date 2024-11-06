@@ -19,9 +19,6 @@
                     </a>
                 }
             </div>
-            <div class="col-lg-6 text-center">
-                <img src="~/images/activity-illustration.svg" alt="Activiteiten" class="img-fluid" style="max-height: 300px;">
-            </div>
         </div>
     </div>
 </div>
@@ -66,7 +63,9 @@
         @foreach (var item in Model)
         {
             <div class="col pb-5">
-                <div class="card h-100 shadow-sm activity-card">
+                <div class="card h-100 shadow-sm activity-card"
+                     style="cursor: pointer;"
+                     onclick="window.location.href='@Url.Action("Details", "Activities", new { id = item.Id })'">
                     @if (!string.IsNullOrEmpty(item.Image))
                     {
                         <img src="@item.Image" class="card-img-top" alt="@item.Name"
