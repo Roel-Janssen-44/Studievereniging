@@ -63,7 +63,9 @@
         @foreach (var item in Model)
         {
             <div class="col pb-5">
-                <div class="card h-100 shadow-sm activity-card">
+                <div class="card h-100 shadow-sm activity-card"
+                     style="cursor: pointer;"
+                     onclick="window.location.href='@Url.Action("Details", "Activities", new { id = item.Id })'">
                     @if (!string.IsNullOrEmpty(item.Image))
                     {
                         <img src="@item.Image" class="card-img-top" alt="@item.Name"
