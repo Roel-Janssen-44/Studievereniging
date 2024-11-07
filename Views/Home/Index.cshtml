@@ -12,16 +12,29 @@
                     Ontdek activiteiten, ontmoet medestudenten en maak deel uit van onze community.
                 </p>
                 <div class="d-flex gap-3">
-                    <a asp-controller="Activities" asp-action="Index" class="btn btn-light btn-lg">
-                        <i class="bi bi-calendar-event"></i> Bekijk Activiteiten
+                    <!-- Knop naar de loginpagina -->
+                    <a href="/Users/Login" class="btn btn-light btn-lg">
+                        <i class="bi bi-person-plus"></i> Meld je aan
                     </a>
                     <a href="#about" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-info-circle"></i> Over Ons
                     </a>
                 </div>
             </div>
-            <div class="col-lg-6 text-center d-none d-lg-block">
-                <img src="/IMG/VictuzLogo.png" alt="Victuz Logo" class="img-fluid" style="max-height: 400px;">
+            <div class="col-lg-6 d-flex justify-content-end align-items-center">
+                <!-- Venster voor aankomende activiteiten -->
+                <div class="p-4 rounded shadow" style="background: linear-gradient(135deg, #156572, #D1AF7B); color: #FFFFFF; max-width: 90%;">
+                    <h5 class="mb-3" style="color: #D1AF7B;">Aankomende Activiteiten</h5>
+                    <div id="upcomingActivitiesWidget">
+                        <div class="spinner-border text-light" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                    <!-- Knop naar activiteitenpagina -->
+                    <a asp-controller="Activities" asp-action="Index" class="btn btn-light btn-lg mt-3">
+                        <i class="bi bi-calendar-event"></i> Ga naar Activiteiten
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -88,23 +101,27 @@
         <div class="row align-items-center">
             <div class="col-lg-6">
                 <h2 class="display-5 fw-bold mb-4 text-teal">Over Victuz</h2>
-                <p class="lead mb-4">
-                    Victuz is meer dan een studievereniging. We zijn een community van studenten
-                    die elkaar helpen groeien, zowel academisch als persoonlijk.
-                </p>
-                <div class="d-flex gap-4 mb-4">
-                    <div>
-                        <h3 class="h2 fw-bold text-primary-gold">500+</h3>
-                        <p class="text-muted">Actieve Leden</p>
-                    </div>
-                    <div>
-                        <h3 class="h2 fw-bold text-primary-gold">50+</h3>
-                        <p class="text-muted">Activiteiten per Jaar</p>
-                    </div>
-                    <div>
-                        <h3 class="h2 fw-bold text-primary-gold">10+</h3>
-                        <p class="text-muted">Jaar Ervaring</p>
-                    </div>
+                <div class="lead mb-4">
+                    <p>
+                        Victuz is meer dan een studievereniging. We zijn een bruisende community van studenten die samen werken aan groei, zowel academisch als persoonlijk. Bij ons draait het niet alleen om studeren; we geloven in een balans tussen plezier en leren.
+                    </p>
+
+                    <p>
+                        Bij Victuz organiseren we het hele jaar door een scala aan activiteiten, van gezellige borrels en sporttoernooien tot inspirerende workshops en studiegerelateerde evenementen. Of je nu wilt netwerken, nieuwe vrienden wilt maken of simpelweg even wilt ontspannen na een drukke week, Victuz heeft altijd iets voor jou.
+                    </p>
+
+                    <p>
+                        Als trotse studievereniging van <strong>Zuyd Hogeschool</strong> verbinden we studenten uit verschillende achtergronden en interesses. We geloven dat je studententijd de perfecte kans is om jezelf te ontwikkelen, je horizon te verbreden en herinneringen te maken die een leven lang meegaan.
+                    </p>
+
+                    <p>
+                        Bij Victuz zit je nooit stil. Doe mee aan onze creatieve workshops, ontdek verborgen talenten tijdens onze activiteiten of werk samen aan uitdagende projecten. We zijn er om je te ondersteunen, te inspireren en bovenal om je studententijd onvergetelijk te maken. Sluit je aan en beleef samen met ons de ultieme Victuz-ervaring!
+                    </p>
+
+                    <!-- Meld je aan knop -->
+                    <a href="/Users/Login" class="btn btn-primary btn-lg mt-4">
+                        <i class="bi bi-person-plus"></i> Meld je aan
+                    </a>
                 </div>
             </div>
             <div class="col-lg-6">
@@ -127,110 +144,92 @@
     </div>
 </section>
 
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center display-5 fw-bold mb-5">Gemiste Activiteiten</h2>
-        <div id="pastActivities" class="row g-4">
-            <div class="text-center">
-                <div class="spinner-border text-primary" role="status">
-                    <span class="visually-hidden">Loading...</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 @section Scripts {
     <script>
-        // Fetch upcoming activities
+        // Function to render activities in a given container
+        function renderActivities(containerId, activities) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = activities.length ? activities.map(activity => `
+                        <div class="col-md-4">
+                            <div class="card h-100 shadow-sm animate-card">
+                                ${activity.image ? `
+                                <img src="${activity.image}" class="card-img-top" alt="${activity.name}" style="height: 200px; object-fit: cover;">
+                                ` : `
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <i class="bi bi-calendar-event display-1 text-muted"></i>
+                                </div>
+                                `}
+                                <div class="card-body">
+                                    <h5 class="card-title">${activity.name}</h5>
+                                    <p class="card-text">
+                                        <i class="bi bi-calendar"></i> ${new Date(activity.startDate).toLocaleDateString()}
+                                        <br>
+                                        <i class="bi bi-geo-alt"></i> ${activity.location}
+                                    </p>
+                                    <a href="/Activities/Details/${activity.id}" class="btn btn-outline-primary">
+                                        Meer Info
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('') : `
+                        <div class="col-12">
+                            <div class="text-center text-muted">
+                                <i class="bi bi-calendar-x display-4"></i>
+                                <p class="mt-3">Geen komende activiteiten gevonden</p>
+                            </div>
+                        </div>
+                    `;
+        }
+
+        // Function to render activities in the simplified widget format with a limit of 2 activities
+        function renderWidget(containerId, activities) {
+            const container = document.getElementById(containerId);
+
+            // Sorteer activiteiten op datum (meest recente eerst) en neem de eerste 2
+            const limitedActivities = activities
+                .sort((a, b) => new Date(a.startDate) - new Date(b.startDate))
+                .slice(0, 2);
+
+            container.innerHTML = limitedActivities.length ? limitedActivities.map(activity => `
+                        <div class="mb-3">
+                            <strong>${activity.name}</strong><br>
+                            <small><i class="bi bi-calendar"></i> ${new Date(activity.startDate).toLocaleDateString()}</small><br>
+                            <small><i class="bi bi-geo-alt"></i> ${activity.location}</small>
+                        </div>
+                    `).join('') : `
+                        <div class="text-muted">
+                            Geen komende activiteiten gevonden.
+                        </div>
+                    `;
+        }
+
+        // Fetch upcoming activities for both locations
         fetch('/api/activities/upcoming')
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(activities => {
-                const container = document.getElementById('upcomingActivities');
-                container.innerHTML = activities.length ? activities.map(activity => `
-                            <div class="col-md-4">
-                                <div class="card h-100 shadow-sm animate-card">
-                                    ${activity.image ? `
-                                    <img src="${activity.image}" class="card-img-top" alt="${activity.name}" style="height: 200px; object-fit: cover;">
-                                    ` : `
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                        <i class="bi bi-calendar-event display-1 text-muted"></i>
-                                    </div>
-                                    `}
-                                    <div class="card-body">
-                                        <h5 class="card-title">${activity.name}</h5>
-                                        <p class="card-text">
-                                            <i class="bi bi-calendar"></i> ${new Date(activity.startDate).toLocaleDateString()}
-                                            <br>
-                                            <i class="bi bi-geo-alt"></i> ${activity.location}
-                                        </p>
-                                        <a href="/Activities/Details/${activity.id}" class="btn btn-outline-primary">
-                                            Meer Info
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('') : `
-                            <div class="col-12">
-                                <div class="text-center text-muted">
-                                    <i class="bi bi-calendar-x display-4"></i>
-                                    <p class="mt-3">Geen komende activiteiten gevonden</p>
-                                </div>
-                            </div>
-                        `;
+                if (!Array.isArray(activities)) {
+                    throw new Error('Invalid data format received from API.');
+                }
+                // Render only 2 activities in the widget
+                renderWidget('upcomingActivitiesWidget', activities);
+
+                // Render all activities in the full section
+                renderActivities('upcomingActivities', activities);
             })
             .catch(error => {
                 console.error('Error fetching activities:', error);
+                document.getElementById('upcomingActivitiesWidget').innerHTML = `
+                            <div class="text-danger">Er is een fout opgetreden bij het laden van de activiteiten.</div>
+                        `;
                 document.getElementById('upcomingActivities').innerHTML = `
-                            <div class="col-12">
-                                <div class="alert alert-danger text-center">
-                                    Er is een fout opgetreden bij het laden van de activiteiten.
-                                </div>
-                            </div>
-                        `;
-            });
-
-        // Fetch past activities
-        fetch('/api/activities/past')
-            .then(response => response.json())
-            .then(activities => {
-                const container = document.getElementById('pastActivities');
-                container.innerHTML = activities.length ? activities.map(activity => `
-                            <div class="col-md-4">
-                                <div class="card h-100 shadow-sm animate-card">
-                                    ${activity.image ? `
-                                    <img src="${activity.image}" class="card-img-top" alt="${activity.name}" style="height: 200px; object-fit: cover;">
-                                    ` : `
-                                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
-                                        <i class="bi bi-calendar-event display-1 text-muted"></i>
-                                    </div>
-                                    `}
-                                    <div class="card-body">
-                                        <h5 class="card-title">${activity.name}</h5>
-                                        <p class="card-text">
-                                            <i class="bi bi-calendar"></i> ${new Date(activity.endDate).toLocaleDateString()}
-                                            <br>
-                                            <i class="bi bi-geo-alt"></i> ${activity.location}
-                                        </p>
-                                        <span class="text-muted">Deze activiteit heb je gemist</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('') : `
-                            <div class="col-12">
-                                <div class="text-center text-muted">
-                                    <p class="mt-3">Er zijn nog geen gemiste activiteiten.</p>
-                                </div>
-                            </div>
-                        `;
-            })
-            .catch(error => {
-                console.error('Error fetching past activities:', error);
-                document.getElementById('pastActivities').innerHTML = `
-                            <div class="col-12">
-                                <div class="alert alert-danger text-center">
-                                    Er is een fout opgetreden bij het laden van de gemiste activiteiten.
-                                </div>
+                            <div class="alert alert-danger text-center">
+                                Er is een fout opgetreden bij het laden van de activiteiten.
                             </div>
                         `;
             });
