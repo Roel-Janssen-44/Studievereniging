@@ -1,11 +1,24 @@
 ﻿@model IEnumerable<Studievereniging.Models.Suggestions>
 
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
 @{
     ViewData["Title"] = "Activiteit Suggesties";
 }
 
 <div class="container mt-5">
     <h2>Ingezonden Activiteit Suggesties</h2>
+
+    @* Display the "Add Suggestion" button for authorized roles *@
+    @if (User.IsInRole(Role.Admin) || User.IsInRole(Role.BoardMember) || User.IsInRole(Role.Member))
+    {
+        <div class="mb-4">
+            <a asp-action="SuggestActivity" class="btn btn-primary">
+                <i class="bi bi-plus"></i> Voeg een Suggestie Toe
+            </a>
+        </div>
+    }
 
     @if (!Model.Any())
     {

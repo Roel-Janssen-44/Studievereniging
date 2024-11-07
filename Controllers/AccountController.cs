@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Studievereniging.Models;
 using Studievereniging.Models.ViewModels;
+using System.Threading.Tasks;
 
 namespace Studievereniging.Controllers
 {
@@ -9,20 +10,23 @@ namespace Studievereniging.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public AccountController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
         public IActionResult Login(string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
-            return View();
+            return View("/Views/Users/Login.cshtml"); // Explicitly specifying the path to the Login view
         }
 
         [HttpPost]
@@ -33,9 +37,9 @@ namespace Studievereniging.Controllers
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(
-                    model.Username, 
-                    model.Password, 
-                    model.RememberMe, 
+                    model.Username,
+                    model.Password,
+                    model.RememberMe,
                     lockoutOnFailure: true);
 
                 if (result.Succeeded)
@@ -44,15 +48,15 @@ namespace Studievereniging.Controllers
                 }
                 if (result.IsLockedOut)
                 {
-                    return View("Lockout");
+                    return View("Lockout"); // Displays a lockout view if the user is locked out due to too many failed attempts
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
+                    return View("/Views/Users/Login.cshtml"); // Explicitly specifying the path again for failed login
                 }
             }
-            return View(model);
+            return View("/Views/Users/Login.cshtml"); // Specifying the path again if model state is invalid
         }
 
         [HttpPost]
@@ -77,18 +81,24 @@ namespace Studievereniging.Controllers
             ViewData["ReturnUrl"] = returnUrl;
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser 
-                { 
-                    UserName = model.Username, 
-                    Email = model.Email 
+                var user = new ApplicationUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    // Add to default role if needed
+                    // Ensure the "Member" role exists
+                    if (!await _roleManager.RoleExistsAsync("Member"))
+                    {
+                        await _roleManager.CreateAsync(new IdentityRole("Member"));
+                    }
+
+                    // Add the new user to the "Member" role
                     await _userManager.AddToRoleAsync(user, "Member");
-                    
+
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToLocal(returnUrl);
                 }
@@ -117,4 +127,4 @@ namespace Studievereniging.Controllers
             }
         }
     }
-} 
+}
