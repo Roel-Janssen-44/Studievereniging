@@ -25,23 +25,76 @@ namespace Studievereniging.Controllers
             return View();
         }
 
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
+        //{
+        //        Console.WriteLine("Login console.log");
+        //    ViewData["ReturnUrl"] = returnUrl;
+        //    if (ModelState.IsValid)
+        //    {
+        //        var result = await _signInManager.PasswordSignInAsync(
+        //            model.Username, 
+        //            model.Password,  
+        //            model.RememberMe, 
+        //            lockoutOnFailure: true);
+
+        //        if (result.Succeeded)
+        //        { 
+        //            return RedirectToLocal(returnUrl);
+        //        }
+
+        //        if (result.IsLockedOut)
+        //        {
+        //            return View("Lockout");
+        //        }
+        //        else
+        //        {
+        //            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+        //            return View(model);
+        //        }
+        //    }
+        //    return View(model);
+        //}
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
+            Console.WriteLine("Login console.log");
             ViewData["ReturnUrl"] = returnUrl;
+
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(
-                    model.Username, 
-                    model.Password, 
-                    model.RememberMe, 
+                    model.Username,
+                    model.Password,
+                    model.RememberMe,
                     lockoutOnFailure: true);
 
+
+                // Redirect admin to dashboard
                 if (result.Succeeded)
                 {
+                    // Get the logged-in user
+                    var user = await _userManager.FindByNameAsync(model.Username);
+
+                    if (user != null)
+                    {
+                        // Check if the user is in the Admin role
+                        var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+                        if (isAdmin)
+                        {
+                            // Redirect to the Admin Dashboard if the user is an admin
+                            return Redirect("/Admin/Dashboard");
+                        }
+                    }
+
+                    // Redirect to the return URL or homepage if not an admin
                     return RedirectToLocal(returnUrl);
                 }
+
                 if (result.IsLockedOut)
                 {
                     return View("Lockout");
@@ -52,8 +105,10 @@ namespace Studievereniging.Controllers
                     return View(model);
                 }
             }
+
             return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

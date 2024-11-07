@@ -92,5 +92,10 @@ namespace Studievereniging.Controllers
 
             return RedirectToAction("Details", "Orders", new { id = order.Id });
         }
+
+        public int GetTotalItemsCount()
+        {
+            return _cartService.GetCart().Count;
+        }
     }
 } 

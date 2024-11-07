@@ -129,13 +129,21 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav me-auto">
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2"></i> Dashboard
+                                </a>
+                            </li>
+                        }
                         <!-- Activities Dropdown - Visible to all -->
 
                         @if (!User.Identity?.IsAuthenticated ?? false)
                         {
                         <li class="nav-item">
                              <a class="nav-link" asp-controller="Activities" asp-action="Index">
-                                <i class="bi bi-list"></i> All Activities
+                                <i class="bi bi-list"></i> Alle Activiteiten
                             </a>
                         </li>
                         }
@@ -143,56 +151,43 @@
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                    <i class="bi bi-calendar-event"></i> Activities
+                                    <i class="bi bi-calendar-event"></i> Activiteiten
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-animated">
                                     <li><hr class="dropdown-divider"></li>
                                     <li>
                                         <a class="dropdown-item" asp-controller="Activities" asp-action="Index">
-                                            <i class="bi bi-list"></i> All Activities
+                                            <i class="bi bi-list"></i> Alle Activiteiten
                                         </a>
                                     </li>
                                     <li>
                                         <!-- Todo - my activity page -->
                                         <a class="dropdown-item" asp-controller="Activities" asp-action="Index">
-                                            <i class="bi bi-person-check"></i> My Activities
+                                            <i class="bi bi-person-check"></i> Mijn activiteiten
                                         </a>
                                     </li>
+                                    @if (isAdmin)
+                                    {
+                                        <li>
+                                            <a class="dropdown-item" asp-controller="Activities" asp-action="Create">
+                                                <i class="bi bi-plus-lg"></i> Maak Activiteit
+                                            </a>
+                                        </li>
+                                    }
                                 </ul>
                             </li>
                         }
 
-                        <!-- Shop (Products) - Visible to all -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Products" asp-action="Index">
-                                <i class="bi bi-shop"></i> Winkel
-                            </a>
-                        </li>
-
-                        <!-- Contact - Visible to all -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Contact">
-                                <i class="bi bi-envelope"></i> Contact
-                            </a>
-                        </li>
-
-                        @if (isAdmin)
+                        @if (isAdmin || isMember)
                         {
-                            <!-- Admin-only menu items -->
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-                                    <i class="bi bi-gear"></i> Admin
+                                    <i class="bi bi-shop"></i> Winkel
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-animated">
                                     <li>
-                                        <a class="dropdown-item" asp-controller="Admin" asp-action="Dashboard">
-                                            <i class="bi bi-speedometer2"></i> Dashboard
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Activities" asp-action="Create">
-                                            <i class="bi bi-plus-lg"></i> Maak Activiteit
+                                        <a class="dropdown-item" asp-controller="Products" asp-action="Index">
+                                            <i class="bi bi-shop"></i> Winkel
                                         </a>
                                     </li>
                                     <li>
@@ -205,12 +200,27 @@
                                             <i class="bi bi-list"></i> Alle Bestellingen
                                         </a>
                                     </li>
-                                    <li>
-                                        <a class="dropdown-item" asp-controller="Users" asp-action="Index">
-                                            <i class="bi bi-people"></i> Beheer Users
-                                        </a>
-                                    </li>
                                 </ul>
+                            </li>
+                        }
+
+
+                        @if (!isAdmin)
+                        {
+                            
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Contact">
+                                    <i class="bi bi-envelope"></i> Contact
+                                </a>
+                            </li>
+                        }
+
+                        @if (isAdmin)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Users" asp-action="Index">
+                                    <i class="bi bi-people"></i> Gebruikers beheren
+                                </a>
                             </li>
                         }
                         @if (User.Identity?.IsAuthenticated ?? false)
@@ -235,7 +245,7 @@
                                     <i class="bi bi-cart3"></i> 
                                     <span style="position: absolute; right: 3px; top: 0;">
                                         @CartService.GetTotalQuantity()
-                                        </span>
+                                    </span>
                                 </a>
                             </li>
                             <li class="nav-item dropdown">
