@@ -12,8 +12,8 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    [Migration("20241106092723_suggestions!")]
-    partial class suggestions
+    [Migration("20241107115044_NewCreate")]
+    partial class NewCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -239,6 +239,36 @@ namespace Studievereniging.Migrations
                     b.HasIndex("AdminId");
 
                     b.ToTable("Activities");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Category = "Social",
+                            EndDate = new DateTime(2024, 11, 19, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6165),
+                            Image = "/IMG/spellenmiddag.jpg",
+                            IsPublic = true,
+                            Location = "B2.104",
+                            MaxParticipants = 100,
+                            Name = "Spellen middag",
+                            Price = 0.0,
+                            RegistrationDeadline = new DateTime(2024, 11, 15, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6173),
+                            StartDate = new DateTime(2024, 11, 17, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6106)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Category = "Education",
+                            EndDate = new DateTime(2024, 11, 12, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6181),
+                            Image = "/IMG/workshopcoderen.jpg",
+                            IsPublic = true,
+                            Location = "B3.305",
+                            MaxParticipants = 50,
+                            Name = "Workshop coderen",
+                            Price = 5.0,
+                            RegistrationDeadline = new DateTime(2024, 11, 9, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6184),
+                            StartDate = new DateTime(2024, 11, 12, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6179)
+                        });
                 });
 
             modelBuilder.Entity("Studievereniging.Models.ApplicationUser", b =>
@@ -369,6 +399,9 @@ namespace Studievereniging.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Image")
                         .HasColumnType("nvarchar(max)");
 
@@ -382,6 +415,40 @@ namespace Studievereniging.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Victuz lidmaatschap",
+                            Image = "/IMG/wordlid.png",
+                            Name = "Lidmaatschap",
+                            Price = 5.9900000000000002
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Comfortabel katoenen T-shirt",
+                            Image = "/IMG/shirt.jpg",
+                            Name = "T-Shirt",
+                            Price = 15.99
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Koffiemok met logo",
+                            Image = "/IMG/mok.jpg",
+                            Name = "Mok",
+                            Price = 9.9900000000000002
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Sticker met verenigingslogo",
+                            Image = "/IMG/sticker.png",
+                            Name = "Sticker",
+                            Price = 4.9500000000000002
+                        });
                 });
 
             modelBuilder.Entity("Studievereniging.Models.Suggestions", b =>
@@ -395,12 +462,27 @@ namespace Studievereniging.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedById");
 
                     b.ToTable("Suggestions");
                 });
@@ -521,6 +603,17 @@ namespace Studievereniging.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Studievereniging.Models.Suggestions", b =>
+                {
+                    b.HasOne("Studievereniging.Models.ApplicationUser", "CreatedBy")
+                        .WithMany()
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Studievereniging.Models.ApplicationUser", b =>

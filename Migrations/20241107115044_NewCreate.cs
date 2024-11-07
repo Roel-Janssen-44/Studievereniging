@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Studievereniging.Migrations
 {
     /// <inheritdoc />
-    public partial class Mirgration : Migration
+    public partial class NewCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -137,6 +139,29 @@ namespace Studievereniging.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Suggestions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Text = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedById = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Suggestions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Suggestions_Users_CreatedById",
+                        column: x => x.CreatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -298,6 +323,26 @@ namespace Studievereniging.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Activities",
+                columns: new[] { "Id", "AdminId", "Calendar", "Category", "EndDate", "Image", "IsPublic", "Location", "MaxParticipants", "Name", "Price", "RegistrationDeadline", "StartDate" },
+                values: new object[,]
+                {
+                    { 1, null, null, "Social", new DateTime(2024, 11, 19, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6165), "/IMG/spellenmiddag.jpg", true, "B2.104", 100, "Spellen middag", 0.0, new DateTime(2024, 11, 15, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6173), new DateTime(2024, 11, 17, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6106) },
+                    { 2, null, null, "Education", new DateTime(2024, 11, 12, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6181), "/IMG/workshopcoderen.jpg", true, "B3.305", 50, "Workshop coderen", 5.0, new DateTime(2024, 11, 9, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6184), new DateTime(2024, 11, 12, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6179) }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Products",
+                columns: new[] { "Id", "Description", "Image", "Name", "Price" },
+                values: new object[,]
+                {
+                    { 1, "Victuz lidmaatschap", "/IMG/wordlid.png", "Lidmaatschap", 5.9900000000000002 },
+                    { 2, "Comfortabel katoenen T-shirt", "/IMG/shirt.jpg", "T-Shirt", 15.99 },
+                    { 3, "Koffiemok met logo", "/IMG/mok.jpg", "Mok", 9.9900000000000002 },
+                    { 4, "Sticker met verenigingslogo", "/IMG/sticker.png", "Sticker", 4.9500000000000002 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Activities_AdminId",
                 table: "Activities",
@@ -341,6 +386,11 @@ namespace Studievereniging.Migrations
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Suggestions_CreatedById",
+                table: "Suggestions",
+                column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
                 table: "UserClaims",
                 column: "UserId");
@@ -382,6 +432,9 @@ namespace Studievereniging.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "Suggestions");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
