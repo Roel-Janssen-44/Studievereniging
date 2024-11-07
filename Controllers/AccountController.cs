@@ -25,43 +25,11 @@ namespace Studievereniging.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
-        //{
-        //        Console.WriteLine("Login console.log");
-        //    ViewData["ReturnUrl"] = returnUrl;
-        //    if (ModelState.IsValid)
-        //    {
-        //        var result = await _signInManager.PasswordSignInAsync(
-        //            model.Username, 
-        //            model.Password,  
-        //            model.RememberMe, 
-        //            lockoutOnFailure: true);
-
-        //        if (result.Succeeded)
-        //        { 
-        //            return RedirectToLocal(returnUrl);
-        //        }
-
-        //        if (result.IsLockedOut)
-        //        {
-        //            return View("Lockout");
-        //        }
-        //        else
-        //        {
-        //            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-        //            return View(model);
-        //        }
-        //    }
-        //    return View(model);
-        //}
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            Console.WriteLine("Login console.log");
             ViewData["ReturnUrl"] = returnUrl;
 
             if (ModelState.IsValid)
