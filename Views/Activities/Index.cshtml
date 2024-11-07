@@ -1,4 +1,7 @@
 @model IEnumerable<Studievereniging.Models.Activity>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Studievereniging.Models.ApplicationUser> UserManager
+
 
 @{
     ViewData["Title"] = "Activiteiten - Victuz";
@@ -62,6 +65,10 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
         @foreach (var item in Model)
         {
+            var isDeadlinePassed = item.RegistrationDeadline.HasValue && DateTime.Now > item.RegistrationDeadline.Value;
+            var isFull = item.MaxParticipants.HasValue && item.Participants.Count >= item.MaxParticipants.Value;
+            var canRegister = !isDeadlinePassed && !isFull;
+
             <div class="col pb-5">
                 <div class="card h-100 shadow-sm activity-card"
                      style="cursor: pointer;"
@@ -113,6 +120,53 @@
                     <div class="card-footer bg-transparent">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
+                                @* to join activity *@
+                                 @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        var userId = (await UserManager.GetUserAsync(User))?.Id;
+                        if (item.Participants.Any(p => p.Id == userId))
+                        {
+                            <form asp-action="LeaveActivity" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger">Leave Activity</button>
+                            </form>
+                        }
+                        else
+                        {
+                            @if (canRegister)
+                            {
+                                <form asp-action="JoinActivity" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-primary">Join Activity</button>
+                                </form>
+                            }
+                            else
+                            {
+                                @if (isDeadlinePassed)
+                                {
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-clock"></i> Registration deadline has passed (@item.RegistrationDeadline?.ToString("dd MMM yyyy HH:mm"))
+                                    </div>
+                                }
+                                else if (isFull)
+                                {
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-people"></i> Activity is full (@item.Participants.Count/@item.MaxParticipants participants)
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <a asp-controller="Users" asp-action="Login" 
+                           asp-route-returnUrl="@Url.Action("Details", "Activities", new { id = item.Id })" 
+                           class="btn btn-primary">
+                            Login to Join Activity
+                        </a>
+                    }
                                 @if (item.Price.HasValue && item.Price > 0)
                                 {
                                     <span class="badge bg-primary">€@item.Price</span>
