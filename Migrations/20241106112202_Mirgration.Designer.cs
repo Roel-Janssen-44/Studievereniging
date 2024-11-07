@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Studievereniging.Data;
 
@@ -11,9 +12,11 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    partial class ApplicationDataModelSnapshot : ModelSnapshot
+    [Migration("20241106112202_Mirgration")]
+    partial class Mirgration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -236,37 +239,6 @@ namespace Studievereniging.Migrations
                     b.HasIndex("AdminId");
 
                     b.ToTable("Activities");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Category = "Social",
-                            EndDate = new DateTime(2024, 11, 19, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6248),
-
-                            Image = "/IMG/spellenmiddag.jpg",
-                            IsPublic = true,
-                            Location = "B2.104",
-                            MaxParticipants = 100,
-                            Name = "Spellen middag",
-                            Price = 0.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 15, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7820),
-                            StartDate = new DateTime(2024, 11, 17, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7710)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Category = "Education",
-                            EndDate = new DateTime(2024, 11, 12, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830),
-
-                            Image = "/IMG/workshopcoderen.jpg",
-                            IsPublic = true,
-                            Location = "B3.305",
-                            MaxParticipants = 50,
-                            Name = "Workshop coderen",
-                            RegistrationDeadline = new DateTime(2024, 11, 9, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6266),
-                            StartDate = new DateTime(2024, 11, 12, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6261)
-                        });
                 });
 
             modelBuilder.Entity("Studievereniging.Models.ApplicationUser", b =>
@@ -342,46 +314,6 @@ namespace Studievereniging.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Studievereniging.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Social"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Education"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Sport"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Culture"
-                        });
-                });
-
             modelBuilder.Entity("Studievereniging.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -453,76 +385,6 @@ namespace Studievereniging.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Products");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Description = "Victuz lidmaatschap",
-                            Image = "/IMG/wordlid.png",
-                            Name = "Lidmaatschap",
-                            Price = 5.9900000000000002
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Description = "Comfortabel katoenen T-shirt",
-                            Image = "/IMG/shirt.jpg",
-                            Name = "T-Shirt",
-                            Price = 15.99
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Description = "Koffiemok met logo",
-                            Image = "/IMG/mok.jpg",
-                            Name = "Mok",
-                            Price = 9.9900000000000002
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Description = "Sticker met verenigingslogo",
-                            Image = "/IMG/sticker.png",
-                            Name = "Sticker",
-                            Price = 4.9500000000000002
-                        });
-                });
-
-            modelBuilder.Entity("Studievereniging.Models.Suggestions", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedById")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.ToTable("Suggestions");
                 });
 
             modelBuilder.Entity("ActivityApplicationUser", b =>
@@ -641,17 +503,6 @@ namespace Studievereniging.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Studievereniging.Models.Suggestions", b =>
-                {
-                    b.HasOne("Studievereniging.Models.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Studievereniging.Models.ApplicationUser", b =>

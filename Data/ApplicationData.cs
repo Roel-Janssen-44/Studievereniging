@@ -60,7 +60,7 @@ namespace Studievereniging.Data
             modelBuilder.Entity<Product>().HasData(
                 new Product
                 {
-                    Id = 1, // Provide a specific ID if required
+                    Id = 1,
                     Name = "Lidmaatschap",
                     Price = 5.99,
                     Description = "Victuz lidmaatschap",

@@ -15,7 +15,7 @@
 <div class="container py-3">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb mb-2">
-            <li class="breadcrumb-item"><a asp-action="Index">Activities</a></li>
+            <li class="breadcrumb-item"><a asp-action="Index">Activiteiten</a></li>
             <li class="breadcrumb-item active">@Model.Name</li>
         </ol>
     </nav>
@@ -132,7 +132,15 @@
                             }
                         }
                     }
-
+                    else
+                    {
+                        <a asp-controller="Users" asp-action="Login" 
+                           asp-route-returnUrl="@Url.Action("Details", "Activities", new { id = Model.Id })" 
+                           class="btn btn-primary">
+                            Login om deel te nemen
+                        </a>
+                    }
+                   
                     @if (User.IsInRole("Admin"))
                     {
                         <div class="btn-group w-100">
