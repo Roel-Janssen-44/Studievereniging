@@ -379,5 +379,61 @@ namespace Studievereniging.Controllers
             return Ok(pastActivities);
         }
 
+        // Add this action to handle quick registration
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> QuickRegistration([FromBody] QuickRegistrationViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var activity = await _context.Activities.FindAsync(model.ActivityId);
+            if (activity == null)
+            {
+                return NotFound();
+            }
+
+            // Generate a random password
+            var password = GenerateRandomPassword();
+            
+            // Create new user
+            var user = new ApplicationUser
+            {
+                UserName = model.Name.Replace(" ", "").ToLower(), // Simple username generation
+                Email = model.Email,
+                Name = model.Name
+            };
+
+            var result = await _userManager.CreateAsync(user, password);
+            if (result.Succeeded)
+            {
+                // Add to Member role
+                await _userManager.AddToRoleAsync(user, Role.Member);
+                
+                // Add user to activity participants
+                activity.Participants.Add(user);
+                await _context.SaveChangesAsync();
+
+                return Json(new
+                {
+                    success = true,
+                    username = user.UserName,
+                    password = password
+                });
+            }
+
+            return BadRequest(result.Errors);
+        }
+
+        private string GenerateRandomPassword()
+        {
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789!@#$%^&*";
+            var random = new Random();
+            return new string(Enumerable.Repeat(chars, 12)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
     }
 }

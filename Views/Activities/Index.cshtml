@@ -1,5 +1,6 @@
 @model IEnumerable<Studievereniging.Models.Activity>
 @using Microsoft.AspNetCore.Identity
+@using Studievereniging.Models.ViewModels
 @inject UserManager<Studievereniging.Models.ApplicationUser> UserManager
 
 
@@ -161,11 +162,10 @@
                     }
                     else
                     {
-                        <a asp-controller="Users" asp-action="Login" 
-                           asp-route-returnUrl="@Url.Action("Details", "Activities", new { id = item.Id })" 
-                           class="btn btn-primary">
-                            Login to Join Activity
-                        </a>
+                        <button type="button" class="btn btn-primary" 
+                                onclick="openQuickRegistration(@item.Id)">
+                            Quick Join Activity
+                        </button>
                     }
                                 @if (item.Price.HasValue && item.Price > 0)
                                 {
@@ -201,9 +201,11 @@
     </div>
 </div>
 
+@await Html.PartialAsync("_QuickRegistrationModal", new QuickRegistrationViewModel())
+
 @section Scripts {
     <script>
-        // Simple search functionality
+        // Existing search functionality
         document.getElementById('searchActivities').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             document.querySelectorAll('.activity-card').forEach(card => {
@@ -215,6 +217,60 @@
                     card.closest('.col').style.display = 'none';
                 }
             });
+        });
+
+        // Quick Registration Modal Functions
+        function openQuickRegistration(activityId) {
+            event.stopPropagation(); // Prevent card click event
+            const modal = document.getElementById('quickRegistrationModal');
+            const form = document.getElementById('quickRegistrationForm');
+            
+            // Set the activity ID
+            form.querySelector('[name="ActivityId"]').value = activityId;
+            
+            // Show the modal
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        }
+
+        // Initialize quick registration form handler when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickRegistrationForm = document.getElementById('quickRegistrationForm');
+            if (quickRegistrationForm) {
+                quickRegistrationForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(e.target);
+                    const jsonData = {};
+                    formData.forEach((value, key) => {
+                        jsonData[key] = value;
+                    });
+
+                    try {
+                        const response = await fetch('/Activities/QuickRegistration', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: JSON.stringify(jsonData)
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            document.getElementById('generatedUsername').textContent = result.username;
+                            document.getElementById('generatedPassword').textContent = result.password;
+                            document.getElementById('registrationSuccess').classList.remove('d-none');
+                            document.getElementById('submitRegistration').classList.add('d-none');
+                        } else {
+                            alert('Registration failed. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred during registration. Please try again.');
+                    }
+                });
+            }
         });
     </script>
 }
