@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Studievereniging.Data;
 
@@ -11,9 +12,11 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    partial class ApplicationDataModelSnapshot : ModelSnapshot
+    [Migration("20241107115919_SeedCategories")]
+    partial class SeedCategories
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,8 +245,7 @@ namespace Studievereniging.Migrations
                         {
                             Id = 1,
                             Category = "Social",
-                            EndDate = new DateTime(2024, 11, 19, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6248),
-
+                            EndDate = new DateTime(2024, 11, 19, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7820),
                             Image = "/IMG/spellenmiddag.jpg",
                             IsPublic = true,
                             Location = "B2.104",
@@ -258,14 +260,14 @@ namespace Studievereniging.Migrations
                             Id = 2,
                             Category = "Education",
                             EndDate = new DateTime(2024, 11, 12, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830),
-
                             Image = "/IMG/workshopcoderen.jpg",
                             IsPublic = true,
                             Location = "B3.305",
                             MaxParticipants = 50,
                             Name = "Workshop coderen",
-                            RegistrationDeadline = new DateTime(2024, 11, 9, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6266),
-                            StartDate = new DateTime(2024, 11, 12, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6261)
+                            Price = 5.0,
+                            RegistrationDeadline = new DateTime(2024, 11, 9, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830),
+                            StartDate = new DateTime(2024, 11, 12, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830)
                         });
                 });
 
@@ -500,27 +502,12 @@ namespace Studievereniging.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedById")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
 
                     b.ToTable("Suggestions");
                 });
@@ -641,17 +628,6 @@ namespace Studievereniging.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Studievereniging.Models.Suggestions", b =>
-                {
-                    b.HasOne("Studievereniging.Models.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Studievereniging.Models.ApplicationUser", b =>

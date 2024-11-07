@@ -1,0 +1,35 @@
+@model Studievereniging.Models.ViewModels.QuickRegistrationViewModel
+
+<div class="modal fade" id="quickRegistrationModal" tabindex="-1" aria-labelledby="quickRegistrationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="quickRegistrationModalLabel">Quick Registration</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="quickRegistrationForm" asp-controller="Activities" asp-action="QuickRegistration" method="post">
+                <div class="modal-body">
+                    <input type="hidden" asp-for="ActivityId" />
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label">Name</label>
+                        <input asp-for="Name" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" required />
+                    </div>
+                    <div id="registrationSuccess" class="alert alert-success d-none">
+                        <p>Registration successful! Your account details:</p>
+                        <p>Username: <span id="generatedUsername"></span></p>
+                        <p>Password: <span id="generatedPassword"></span></p>
+                        <p class="mb-0">Please save these credentials to login later!</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="submitRegistration">Register</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div> 

@@ -1,4 +1,8 @@
 @model IEnumerable<Studievereniging.Models.Activity>
+@using Microsoft.AspNetCore.Identity
+@using Studievereniging.Models.ViewModels
+@inject UserManager<Studievereniging.Models.ApplicationUser> UserManager
+
 
 @{
     ViewData["Title"] = "Activiteiten - Victuz";
@@ -63,6 +67,10 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 mb-4">
         @foreach (var item in Model)
         {
+            var isDeadlinePassed = item.RegistrationDeadline.HasValue && DateTime.Now > item.RegistrationDeadline.Value;
+            var isFull = item.MaxParticipants.HasValue && item.Participants.Count >= item.MaxParticipants.Value;
+            var canRegister = !isDeadlinePassed && !isFull;
+
             <div class="col pb-5">
                 <div class="card h-100 shadow-sm activity-card"
                      style="cursor: pointer;"
@@ -114,6 +122,52 @@
                     <div class="card-footer bg-transparent">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
+                                @* to join activity *@
+                                 @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        var userId = (await UserManager.GetUserAsync(User))?.Id;
+                        if (item.Participants.Any(p => p.Id == userId))
+                        {
+                            <form asp-action="LeaveActivity" method="post">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger">Leave Activity</button>
+                            </form>
+                        }
+                        else
+                        {
+                            @if (canRegister)
+                            {
+                                <form asp-action="JoinActivity" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-primary">Join Activity</button>
+                                </form>
+                            }
+                            else
+                            {
+                                @if (isDeadlinePassed)
+                                {
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-clock"></i> Registration deadline has passed (@item.RegistrationDeadline?.ToString("dd MMM yyyy HH:mm"))
+                                    </div>
+                                }
+                                else if (isFull)
+                                {
+                                    <div class="alert alert-warning">
+                                        <i class="bi bi-people"></i> Activity is full (@item.Participants.Count/@item.MaxParticipants participants)
+                                    </div>
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-primary" 
+                                onclick="openQuickRegistration(@item.Id)">
+                            Quick Join Activity
+                        </button>
+                    }
                                 @if (item.Price.HasValue && item.Price > 0)
                                 {
                                     <span class="badge bg-primary">€@item.Price</span>
@@ -148,9 +202,11 @@
     </div>
 </div>
 
+@await Html.PartialAsync("_QuickRegistrationModal", new QuickRegistrationViewModel())
+
 @section Scripts {
     <script>
-        // Simple search functionality
+        // Existing search functionality
         document.getElementById('searchActivities').addEventListener('input', function (e) {
             const searchTerm = e.target.value.toLowerCase();
             document.querySelectorAll('.activity-card').forEach(card => {
@@ -162,6 +218,60 @@
                     card.closest('.col').style.display = 'none';
                 }
             });
+        });
+
+        // Quick Registration Modal Functions
+        function openQuickRegistration(activityId) {
+            event.stopPropagation(); // Prevent card click event
+            const modal = document.getElementById('quickRegistrationModal');
+            const form = document.getElementById('quickRegistrationForm');
+            
+            // Set the activity ID
+            form.querySelector('[name="ActivityId"]').value = activityId;
+            
+            // Show the modal
+            const modalInstance = new bootstrap.Modal(modal);
+            modalInstance.show();
+        }
+
+        // Initialize quick registration form handler when document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const quickRegistrationForm = document.getElementById('quickRegistrationForm');
+            if (quickRegistrationForm) {
+                quickRegistrationForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(e.target);
+                    const jsonData = {};
+                    formData.forEach((value, key) => {
+                        jsonData[key] = value;
+                    });
+
+                    try {
+                        const response = await fetch('/Activities/QuickRegistration', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: JSON.stringify(jsonData)
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            document.getElementById('generatedUsername').textContent = result.username;
+                            document.getElementById('generatedPassword').textContent = result.password;
+                            document.getElementById('registrationSuccess').classList.remove('d-none');
+                            document.getElementById('submitRegistration').classList.add('d-none');
+                        } else {
+                            alert('Registration failed. Please try again.');
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred during registration. Please try again.');
+                    }
+                });
+            }
         });
     </script>
 }
