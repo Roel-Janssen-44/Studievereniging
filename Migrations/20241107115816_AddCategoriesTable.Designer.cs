@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Studievereniging.Data;
 
@@ -11,9 +12,11 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    partial class ApplicationDataModelSnapshot : ModelSnapshot
+    [Migration("20241107115816_AddCategoriesTable")]
+    partial class AddCategoriesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,30 +245,29 @@ namespace Studievereniging.Migrations
                         {
                             Id = 1,
                             Category = "Social",
-                            EndDate = new DateTime(2024, 11, 19, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6165),
-
+                            EndDate = new DateTime(2024, 11, 19, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5230),
                             Image = "/IMG/spellenmiddag.jpg",
                             IsPublic = true,
                             Location = "B2.104",
                             MaxParticipants = 100,
                             Name = "Spellen middag",
                             Price = 0.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 15, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7820),
-                            StartDate = new DateTime(2024, 11, 17, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7710)
+                            RegistrationDeadline = new DateTime(2024, 11, 15, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5230),
+                            StartDate = new DateTime(2024, 11, 17, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5170)
                         },
                         new
                         {
                             Id = 2,
                             Category = "Education",
-                            EndDate = new DateTime(2024, 11, 12, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830),
+                            EndDate = new DateTime(2024, 11, 12, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5240),
                             Image = "/IMG/workshopcoderen.jpg",
                             IsPublic = true,
                             Location = "B3.305",
                             MaxParticipants = 50,
                             Name = "Workshop coderen",
                             Price = 5.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 9, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6184),
-                            StartDate = new DateTime(2024, 11, 12, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6179)
+                            RegistrationDeadline = new DateTime(2024, 11, 9, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5240),
+                            StartDate = new DateTime(2024, 11, 12, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5240)
                         });
                 });
 
@@ -500,27 +502,12 @@ namespace Studievereniging.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("CreatedById")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
 
                     b.ToTable("Suggestions");
                 });
@@ -641,17 +628,6 @@ namespace Studievereniging.Migrations
                     b.Navigation("Order");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Studievereniging.Models.Suggestions", b =>
-                {
-                    b.HasOne("Studievereniging.Models.ApplicationUser", "CreatedBy")
-                        .WithMany()
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
                 });
 
             modelBuilder.Entity("Studievereniging.Models.ApplicationUser", b =>

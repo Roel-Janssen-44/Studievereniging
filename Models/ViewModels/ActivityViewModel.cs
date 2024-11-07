@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Studievereniging.Models.ViewModels
 {
@@ -44,5 +45,10 @@ namespace Studievereniging.Models.ViewModels
         public List<UserSelectViewModel> CurrentOrganizers { get; set; } = new List<UserSelectViewModel>();
         
         public List<UserSelectViewModel> CurrentParticipants { get; set; } = new List<UserSelectViewModel>();
+
+        [Display(Name = "Categorie")]
+        public int? CategoryId { get; set; }
+
+        public SelectList Categories { get; set; }
     }
 }
