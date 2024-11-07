@@ -29,11 +29,13 @@ namespace Studievereniging.Controllers
             return View("/Views/Users/Login.cshtml"); // Explicitly specifying the path to the Login view
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl;
+
             if (ModelState.IsValid)
             {
                 var result = await _signInManager.PasswordSignInAsync(
@@ -42,10 +44,29 @@ namespace Studievereniging.Controllers
                     model.RememberMe,
                     lockoutOnFailure: true);
 
+
+                // Redirect admin to dashboard
                 if (result.Succeeded)
                 {
+                    // Get the logged-in user
+                    var user = await _userManager.FindByNameAsync(model.Username);
+
+                    if (user != null)
+                    {
+                        // Check if the user is in the Admin role
+                        var isAdmin = await _userManager.IsInRoleAsync(user, "Admin");
+
+                        if (isAdmin)
+                        {
+                            // Redirect to the Admin Dashboard if the user is an admin
+                            return Redirect("/Admin/Dashboard");
+                        }
+                    }
+
+                    // Redirect to the return URL or homepage if not an admin
                     return RedirectToLocal(returnUrl);
                 }
+
                 if (result.IsLockedOut)
                 {
                     return View("Lockout"); // Displays a lockout view if the user is locked out due to too many failed attempts
@@ -56,8 +77,9 @@ namespace Studievereniging.Controllers
                     return View("/Views/Users/Login.cshtml"); // Explicitly specifying the path again for failed login
                 }
             }
-            return View("/Views/Users/Login.cshtml"); // Specifying the path again if model state is invalid
+            return View(model);
         }
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
