@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
@@ -67,7 +68,8 @@ namespace Studievereniging.Controllers
             {
                 StartDate = DateTime.Now,
                 EndDate = DateTime.Now.AddHours(1),
-                AvailableOrganizers = await GetAvailableOrganizers()
+                AvailableOrganizers = await GetAvailableOrganizers(),
+                Categories = new SelectList(await _context.Categories.ToListAsync(), "Id", "Name")
             };
 
             return View(viewModel);
@@ -433,6 +435,28 @@ namespace Studievereniging.Controllers
             var random = new Random();
             return new string(Enumerable.Repeat(chars, 12)
                 .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateCategory(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest("Naam is verplicht");
+            }
+
+            try
+            {
+                var category = new Category { Name = name };
+                _context.Categories.Add(category);
+                await _context.SaveChangesAsync();
+
+                return Json(new { id = category.Id, name = category.Name });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Er is een fout opgetreden");
+            }
         }
 
     }

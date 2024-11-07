@@ -59,14 +59,14 @@
                 </div>
 
                 <div class="mb-3">
-                    <label asp-for="Category" class="form-label">Categorie</label>
-                    <select asp-for="Category" class="form-select">
-                        <option value="">Selecteer een categorie</option>
-                        <option value="sociaal">Sociaal</option>
-                        <option value="studie">Studie</option>
-                        <option value="sport">Sport</option>
-                    </select>
-                    <span asp-validation-for="Category" class="text-danger"></span>
+                    <label asp-for="CategoryId" class="form-label">Categorie</label>
+                    <div class="input-group">
+                        <select asp-for="CategoryId" asp-items="Model.Categories" class="form-select"></select>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+                            <i class="bi bi-plus-lg"></i> Nieuwe Categorie
+                        </button>
+                    </div>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
                 </div>
 
                 <div class="mb-3">

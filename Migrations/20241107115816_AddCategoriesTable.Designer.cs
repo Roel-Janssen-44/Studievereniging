@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Studievereniging.Data;
 
@@ -11,9 +12,11 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    partial class ApplicationDataModelSnapshot : ModelSnapshot
+    [Migration("20241107115816_AddCategoriesTable")]
+    partial class AddCategoriesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,29 +245,29 @@ namespace Studievereniging.Migrations
                         {
                             Id = 1,
                             Category = "Social",
-                            EndDate = new DateTime(2024, 11, 19, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7820),
+                            EndDate = new DateTime(2024, 11, 19, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5230),
                             Image = "/IMG/spellenmiddag.jpg",
                             IsPublic = true,
                             Location = "B2.104",
                             MaxParticipants = 100,
                             Name = "Spellen middag",
                             Price = 0.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 15, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7820),
-                            StartDate = new DateTime(2024, 11, 17, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7710)
+                            RegistrationDeadline = new DateTime(2024, 11, 15, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5230),
+                            StartDate = new DateTime(2024, 11, 17, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5170)
                         },
                         new
                         {
                             Id = 2,
                             Category = "Education",
-                            EndDate = new DateTime(2024, 11, 12, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830),
+                            EndDate = new DateTime(2024, 11, 12, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5240),
                             Image = "/IMG/workshopcoderen.jpg",
                             IsPublic = true,
                             Location = "B3.305",
                             MaxParticipants = 50,
                             Name = "Workshop coderen",
                             Price = 5.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 9, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830),
-                            StartDate = new DateTime(2024, 11, 12, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830)
+                            RegistrationDeadline = new DateTime(2024, 11, 9, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5240),
+                            StartDate = new DateTime(2024, 11, 12, 12, 58, 16, 1, DateTimeKind.Local).AddTicks(5240)
                         });
                 });
 

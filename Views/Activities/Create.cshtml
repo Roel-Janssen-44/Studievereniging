@@ -44,6 +44,57 @@
     </form>
 </div>
 
+<div class="modal fade" id="createCategoryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nieuwe Categorie</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="text" class="form-control" id="categoryName" placeholder="Categorie naam">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                <button type="button" class="btn btn-primary" onclick="saveCategory()">Opslaan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    
+    <script>
+        function saveCategory() {
+            var name = document.getElementById('categoryName').value;
+            if (!name) {
+                alert('Voer een categorienaam in');
+                return;
+            }
+
+            fetch('/Activities/CreateCategory', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'name=' + encodeURIComponent(name)
+            })
+            .then(response => response.json())
+            .then(data => {
+                var select = document.getElementById('CategoryId');
+                var option = new Option(data.name, data.id);
+                select.add(option);
+                select.value = data.id;
+                
+                var modal = bootstrap.Modal.getInstance(document.getElementById('createCategoryModal'));
+                modal.hide();
+                document.getElementById('categoryName').value = '';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Er is een fout opgetreden bij het aanmaken van de categorie.');
+            });
+        }
+    </script>
 }
