@@ -82,5 +82,10 @@ namespace Studievereniging.Services
         {
             return GetCart().Sum(item => item.Price * item.Quantity);
         }
+
+        public int GetTotalQuantity()
+        {
+            return GetCart().Sum(item => item.Quantity);
+        }
     }
 } 
