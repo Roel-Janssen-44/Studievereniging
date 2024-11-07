@@ -178,7 +178,15 @@
                             </li>
                         }
 
-                        @if (isAdmin || isMember)
+                        @if (isMember)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Products" asp-action="Index">
+                                    <i class="bi bi-shop"></i> Winkel
+                                </a>
+                            </li>
+                        }
+                        @if (isAdmin)
                         {
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
