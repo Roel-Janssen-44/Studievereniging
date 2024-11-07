@@ -102,7 +102,6 @@ namespace Studievereniging.Controllers
         }
 
         // GET: Users 
-        [Authorize(Roles = "Admin,Guest")]  // Temporarily allow Guest role
         public async Task<IActionResult> Index()
         {
             var users = await _userManager.Users.ToListAsync();
@@ -163,7 +162,6 @@ namespace Studievereniging.Controllers
         }
 
         // GET: Users/Edit/5
-        [Authorize(Roles = "Admin,Guest")]  // Temporarily allow Guest role
         public async Task<IActionResult> Edit(string id)
         {
             if (id == null)
@@ -191,7 +189,6 @@ namespace Studievereniging.Controllers
         // POST: Users/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin,Guest")]  // Temporarily allow Guest role
         public async Task<IActionResult> Edit(string id, UserEditViewModel model)
         {
             if (id != model.Id)

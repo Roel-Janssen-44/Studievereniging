@@ -1,23 +1,26 @@
-﻿@model IEnumerable<string>
+﻿@model IEnumerable<Studievereniging.Models.Suggestions>
 
 @{
-    ViewData["Title"] = "Activity Suggestions";
+    ViewData["Title"] = "Activiteit Suggesties";
 }
 
-<h1>Activity Suggestions</h1>
+<div class="container mt-5">
+    <h2>Ingezonden Activiteit Suggesties</h2>
 
-<ul class="list-group">
-    @if (Model.Any())
+    @if (!Model.Any())
     {
-        @foreach (var suggestion in Model)
-        {
-            <li class="list-group-item">@suggestion</li>
-        }
+        <p>Er zijn nog geen suggesties ingediend.</p>
     }
     else
     {
-        <li class="list-group-item text-muted">No suggestions available</li>
+        <ul class="list-group">
+            @foreach (var suggestion  in Model)
+            {
+                <li class="list-group-item">
+                    <p>@suggestion.Text</p>
+                    <small class="text-muted">Ingediend op @suggestion.CreatedAt.ToString("dd MMM yyyy HH:mm")</small>
+                </li>
+            }
+        </ul>
     }
-</ul>
-
-<a asp-action="SuggestActivity" class="btn btn-primary mt-4">Suggest New Activity</a>
+</div>

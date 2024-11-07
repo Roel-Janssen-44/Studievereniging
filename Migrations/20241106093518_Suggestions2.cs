@@ -5,7 +5,7 @@
 namespace Studievereniging.Migrations
 {
     /// <inheritdoc />
-    public partial class connec : Migration
+    public partial class Suggestions2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

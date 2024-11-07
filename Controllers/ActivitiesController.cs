@@ -16,9 +16,6 @@ namespace Studievereniging.Controllers
         private readonly ApplicationData _context;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        // In-memory lijst om suggesties tijdelijk op te slaan
-        private static List<string> ActivitySuggestions = new List<string>();
-
         public ActivitiesController(ApplicationData context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
@@ -315,9 +312,13 @@ namespace Studievereniging.Controllers
         }
 
         // GET: Activities/Suggestions
-        public IActionResult Suggestions()
+        public async Task<IActionResult> Suggestions()
         {
-            return View(ActivitySuggestions);
+            var suggestions = await _context.Suggestions
+                .OrderByDescending(s => s.CreatedAt)
+                .ToListAsync();
+
+            return View(suggestions);
         }
 
         // GET: Activities/SuggestActivity
@@ -329,16 +330,24 @@ namespace Studievereniging.Controllers
         // POST: Activities/SuggestActivity
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult SuggestActivity(string suggestionText)
+        public async Task<IActionResult> SuggestActivity(string suggestionText)
         {
             if (string.IsNullOrWhiteSpace(suggestionText))
             {
-                return BadRequest("Suggestion cannot be empty.");
+                ModelState.AddModelError(string.Empty, "Suggestie mag niet leeg zijn.");
+                return View();
             }
 
-            // Voeg de suggestie toe aan de in-memory lijst
-            ActivitySuggestions.Add(suggestionText);
+            // Sla de suggestie op in de database
+            var suggestion = new Suggestions
+            {
+                Text = suggestionText
+            };
 
+            _context.Suggestions.Add(suggestion);
+            await _context.SaveChangesAsync();
+
+            TempData["Message"] = "Bedankt voor je suggestie!";
             return RedirectToAction(nameof(Suggestions));
         }
 
@@ -358,5 +367,17 @@ namespace Studievereniging.Controllers
         {
             return _context.Activities.Any(e => e.Id == id);
         }
+
+        [HttpGet("api/activities/past")]
+        public async Task<IActionResult> GetPastActivities()
+        {
+            var pastActivities = await _context.Activities
+                .Where(a => a.EndDate < DateTime.Now) // Filter for past activities
+                .OrderByDescending(a => a.EndDate) // Sort by most recent past activities
+                .ToListAsync();
+
+            return Ok(pastActivities);
+        }
+
     }
 }
