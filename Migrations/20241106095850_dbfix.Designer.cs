@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Studievereniging.Data;
 
@@ -11,9 +12,11 @@ using Studievereniging.Data;
 namespace Studievereniging.Migrations
 {
     [DbContext(typeof(ApplicationData))]
-    partial class ApplicationDataModelSnapshot : ModelSnapshot
+    [Migration("20241106095850_dbfix")]
+    partial class dbfix
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -242,29 +245,29 @@ namespace Studievereniging.Migrations
                         {
                             Id = 1,
                             Category = "Social",
-                            EndDate = new DateTime(2024, 11, 18, 12, 26, 55, 147, DateTimeKind.Local).AddTicks(8752),
+                            EndDate = new DateTime(2024, 11, 18, 10, 58, 49, 678, DateTimeKind.Local).AddTicks(3467),
                             Image = "/IMG/spellenmiddag.jpg",
                             IsPublic = true,
                             Location = "B2.104",
                             MaxParticipants = 100,
                             Name = "Spellen middag",
                             Price = 0.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 14, 12, 26, 55, 147, DateTimeKind.Local).AddTicks(8760),
-                            StartDate = new DateTime(2024, 11, 16, 12, 26, 55, 147, DateTimeKind.Local).AddTicks(8654)
+                            RegistrationDeadline = new DateTime(2024, 11, 14, 10, 58, 49, 678, DateTimeKind.Local).AddTicks(3474),
+                            StartDate = new DateTime(2024, 11, 16, 10, 58, 49, 678, DateTimeKind.Local).AddTicks(3403)
                         },
                         new
                         {
                             Id = 2,
                             Category = "Education",
-                            EndDate = new DateTime(2024, 11, 11, 12, 26, 55, 147, DateTimeKind.Local).AddTicks(8771),
+                            EndDate = new DateTime(2024, 11, 11, 10, 58, 49, 678, DateTimeKind.Local).AddTicks(3482),
                             Image = "/IMG/workshopcoderen.jpg",
                             IsPublic = true,
                             Location = "B3.305",
                             MaxParticipants = 50,
                             Name = "Workshop coderen",
                             Price = 5.0,
-                            RegistrationDeadline = new DateTime(2024, 11, 8, 12, 26, 55, 147, DateTimeKind.Local).AddTicks(8773),
-                            StartDate = new DateTime(2024, 11, 11, 12, 26, 55, 147, DateTimeKind.Local).AddTicks(8769)
+                            RegistrationDeadline = new DateTime(2024, 11, 8, 10, 58, 49, 678, DateTimeKind.Local).AddTicks(3484),
+                            StartDate = new DateTime(2024, 11, 11, 10, 58, 49, 678, DateTimeKind.Local).AddTicks(3480)
                         });
                 });
 
@@ -458,15 +461,6 @@ namespace Studievereniging.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Text")
                         .IsRequired()

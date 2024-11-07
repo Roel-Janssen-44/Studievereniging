@@ -14,13 +14,20 @@
     else
     {
         <ul class="list-group">
-            @foreach (var suggestion  in Model)
+            @foreach (var suggestion in Model)
             {
                 <li class="list-group-item">
-                    <p>@suggestion.Text</p>
+                    <p><strong>Suggestie:</strong> @suggestion.Text</p>
+                    <p><strong>Ingediend door:</strong> @suggestion.Name</p>
                     <small class="text-muted">Ingediend op @suggestion.CreatedAt.ToString("dd MMM yyyy HH:mm")</small>
                 </li>
             }
         </ul>
     }
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Terug naar Activiteiten
+        </a>
+    </div>
 </div>
