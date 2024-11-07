@@ -242,7 +242,7 @@ namespace Studievereniging.Migrations
                         {
                             Id = 1,
                             Category = "Social",
-                            EndDate = new DateTime(2024, 11, 19, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6248),
+                            EndDate = new DateTime(2024, 11, 19, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6165),
 
                             Image = "/IMG/spellenmiddag.jpg",
                             IsPublic = true,
@@ -258,14 +258,14 @@ namespace Studievereniging.Migrations
                             Id = 2,
                             Category = "Education",
                             EndDate = new DateTime(2024, 11, 12, 12, 59, 18, 749, DateTimeKind.Local).AddTicks(7830),
-
                             Image = "/IMG/workshopcoderen.jpg",
                             IsPublic = true,
                             Location = "B3.305",
                             MaxParticipants = 50,
                             Name = "Workshop coderen",
-                            RegistrationDeadline = new DateTime(2024, 11, 9, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6266),
-                            StartDate = new DateTime(2024, 11, 12, 11, 47, 23, 992, DateTimeKind.Local).AddTicks(6261)
+                            Price = 5.0,
+                            RegistrationDeadline = new DateTime(2024, 11, 9, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6184),
+                            StartDate = new DateTime(2024, 11, 12, 12, 50, 43, 782, DateTimeKind.Local).AddTicks(6179)
                         });
                 });
 
