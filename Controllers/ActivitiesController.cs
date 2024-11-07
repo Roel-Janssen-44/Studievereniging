@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace Studievereniging.Controllers
             _userManager = userManager;
         }
 
-        // Methode om het huidige ingelogde gebruikers-ID te krijgen
+        // Method to get the current logged-in user's ID
         private async Task<string> GetCurrentUserId()
         {
             var user = await _userManager.GetUserAsync(User);
@@ -97,7 +98,7 @@ namespace Studievereniging.Controllers
                     Admin = currentUser
                 };
 
-                // Voeg organisatoren toe
+                // Add organizers
                 if (viewModel.SelectedOrganizerIds != null)
                 {
                     var organizers = await _context.Users
@@ -175,7 +176,7 @@ namespace Studievereniging.Controllers
                         return NotFound();
                     }
 
-                    // Update de eigenschappen van de activiteit
+                    // Update activity properties
                     activity.Name = viewModel.Name;
                     activity.StartDate = viewModel.StartDate;
                     activity.EndDate = viewModel.EndDate;
@@ -187,7 +188,7 @@ namespace Studievereniging.Controllers
                     activity.Image = viewModel.Image;
                     activity.IsPublic = viewModel.IsPublic;
 
-                    // Update organisatoren
+                    // Update organizers
                     activity.Organisers.Clear();
                     if (viewModel.SelectedOrganizerIds != null)
                     {
@@ -222,7 +223,6 @@ namespace Studievereniging.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> JoinActivity(int id)
         {
-            // Check if user is authenticated
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Users", new { returnUrl = Url.Action("Details", "Activities", new { id }) });
@@ -243,21 +243,18 @@ namespace Studievereniging.Controllers
                 return NotFound("User not found");
             }
 
-            // Check if user is already a participant
             if (activity.Participants.Any(p => p.Id == user.Id))
             {
                 TempData["Error"] = "You are already participating in this activity";
                 return RedirectToAction(nameof(Details), new { id = activity.Id });
             }
 
-            // Check if activity is full
             if (activity.MaxParticipants.HasValue && activity.Participants.Count >= activity.MaxParticipants.Value)
             {
                 TempData["Error"] = "This activity is full";
                 return RedirectToAction(nameof(Details), new { id = activity.Id });
             }
 
-            // Check if registration deadline has passed
             if (activity.RegistrationDeadline.HasValue && DateTime.Now > activity.RegistrationDeadline.Value)
             {
                 TempData["Error"] = "Registration deadline has passed";
@@ -276,7 +273,6 @@ namespace Studievereniging.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> LeaveActivity(int id)
         {
-            // Check if user is authenticated
             if (!User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Login", "Users");
@@ -297,7 +293,6 @@ namespace Studievereniging.Controllers
                 return NotFound("User not found");
             }
 
-            // Check if user is a participant
             if (!activity.Participants.Any(p => p.Id == user.Id))
             {
                 TempData["Error"] = "You are not participating in this activity";
@@ -322,6 +317,7 @@ namespace Studievereniging.Controllers
         }
 
         // GET: Activities/SuggestActivity
+        [Authorize(Roles = $"{Role.Member},{Role.BoardMember},{Role.Admin}")]
         public IActionResult SuggestActivity()
         {
             return View();
@@ -329,22 +325,29 @@ namespace Studievereniging.Controllers
 
         // POST: Activities/SuggestActivity
         [HttpPost]
+        [Authorize(Roles = $"{Role.Member},{Role.BoardMember},{Role.Admin}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SuggestActivity(string name, string email, string suggestionText)
+        public async Task<IActionResult> SuggestActivity(string suggestionText)
         {
-            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(suggestionText))
+            if (string.IsNullOrWhiteSpace(suggestionText))
             {
                 ModelState.AddModelError(string.Empty, "Alle velden zijn verplicht.");
                 return View();
             }
 
-            // Sla de suggestie op in de database
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
             var suggestion = new Suggestions
             {
-                Name = name,
-                Email = email,
+                Name = user.Name,
+                Email = user.Email,
                 Text = suggestionText,
-                CreatedAt = DateTime.Now
+                CreatedAt = DateTime.Now,
+                CreatedById = user.Id
             };
 
             _context.Suggestions.Add(suggestion);
@@ -375,8 +378,8 @@ namespace Studievereniging.Controllers
         public async Task<IActionResult> GetPastActivities()
         {
             var pastActivities = await _context.Activities
-                .Where(a => a.EndDate < DateTime.Now) // Filter for past activities
-                .OrderByDescending(a => a.EndDate) // Sort by most recent past activities
+                .Where(a => a.EndDate < DateTime.Now)
+                .OrderByDescending(a => a.EndDate)
                 .ToListAsync();
 
             return Ok(pastActivities);

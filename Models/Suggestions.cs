@@ -19,5 +19,8 @@ namespace Studievereniging.Models
         public string Email { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+        public string CreatedById { get; set; }
+        public virtual ApplicationUser CreatedBy { get; set; } 
     }
 }
