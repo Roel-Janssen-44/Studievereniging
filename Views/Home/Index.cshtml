@@ -1,4 +1,4 @@
-@{
+﻿@{
     ViewData["Title"] = "Home - Victuz";
 }
 
@@ -130,6 +130,86 @@
         </div>
     </div>
 </section>
+
+
+<style>
+    .custom-title {
+        color: #178994; /* Blauwgroene kleur */
+    }
+
+    .list-group-item {
+        background-color: #D1AF7B; /* Zandkleurig */
+        color: #fff; /* Witte tekst voor contrast */
+        border: 1px solid #178994; /* Teal kleur voor de border */
+    }
+
+        .list-group-item strong {
+            color: #fff; /* Zorgt dat de titels wit blijven */
+        }
+
+    .btn-custom {
+        background-color: #178994; /* Blauwgroene kleur */
+        color: #fff; /* Witte tekst */
+        border: none;
+    }
+
+        .btn-custom:hover {
+            background-color: #D1AF7B; /* Kleurverandering bij hover */
+            color: #fff;
+        }
+
+    .card {
+        border: 1px solid #178994; /* Teal kleur voor de kaartborder */
+    }
+</style>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="text-center mb-4 custom-title">
+                        🌟 Waarom lid worden van Victuz? 🌟
+                    </h3>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex align-items-center">
+                            <span class="me-2">✅</span>
+                            <strong>Voorang op niet-leden:</strong>
+                            <span class="ms-2">Exclusieve toegang tot activiteiten voordat deze openbaar worden.</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <span class="me-2">💸</span>
+                            <strong>Korting:</strong>
+                            <span class="ms-2">Profiteer van kortingen op deelnamekosten en merchandise.</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <span class="me-2">🎉</span>
+                            <strong>Exclusieve evenementen:</strong>
+                            <span class="ms-2">Toegang tot leden-only workshops, borrels en feesten.</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <span class="me-2">💡</span>
+                            <strong>Jouw stem telt:</strong>
+                            <span class="ms-2">Draag suggesties aan en denk mee over activiteiten.</span>
+                        </li>
+                        <li class="list-group-item d-flex align-items-center">
+                            <span class="me-2">🛍️</span>
+                            <strong>Toegang tot de shop:</strong>
+                            <span class="ms-2">Exclusieve toegang tot de unieke ledenwinkel.</span>
+                        </li>
+                    </ul>
+                    <div class="text-center mt-4">
+                        <a href="/Users/Login" class="btn btn-custom btn-lg">
+                            ✨ Word lid!
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <section class="py-5">
     <div class="container">
