@@ -30,6 +30,7 @@ namespace Studievereniging.Controllers
             return View();
         }
 
+        [HttpGet]
         [Route("/api/activities/upcoming")]
         public async Task<IActionResult> GetUpcomingActivities()
         {

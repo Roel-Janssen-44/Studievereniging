@@ -132,15 +132,7 @@
                             }
                         }
                     }
-                    else
-                    {
-                        <a asp-controller="Users" asp-action="Login" 
-                           asp-route-returnUrl="@Url.Action("Details", "Activities", new { id = Model.Id })" 
-                           class="btn btn-primary">
-                            Login om deel te nemen
-                        </a>
-                    }
-                   
+
                     @if (User.IsInRole("Admin"))
                     {
                         <div class="btn-group w-100">
