@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Studievereniging.Data;
 using Studievereniging.Models;
 using Studievereniging.Models.ViewModels;
+using Microsoft.Extensions.Logging;
 
 namespace Studievereniging.Controllers
 {
@@ -17,11 +18,13 @@ namespace Studievereniging.Controllers
     {
         private readonly ApplicationData _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<ActivitiesController> _logger;
 
-        public ActivitiesController(ApplicationData context, UserManager<ApplicationUser> userManager)
+        public ActivitiesController(ApplicationData context, UserManager<ApplicationUser> userManager, ILogger<ActivitiesController> logger)
         {
             _context = context;
             _userManager = userManager;
+            _logger = logger;
         }
 
         // Method to get the current logged-in user's ID
@@ -79,43 +82,47 @@ namespace Studievereniging.Controllers
         // POST: Activities/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ActivityViewModel viewModel)
+        public async Task<IActionResult> Create([Bind("Id,Name,StartDate,EndDate,Location,MaxParticipants,Price,RegistrationDeadline,Category,Image,IsPublic")] Activity activity)
         {
-            if (ModelState.IsValid)
+            try
             {
-                var currentUser = await _userManager.GetUserAsync(User);
-                var activity = new Activity
+                if (ModelState.IsValid)
                 {
-                    Name = viewModel.Name,
-                    StartDate = viewModel.StartDate,
-                    EndDate = viewModel.EndDate,
-                    Location = viewModel.Location,
-                    MaxParticipants = viewModel.MaxParticipants,
-                    Price = viewModel.Price,
-                    RegistrationDeadline = viewModel.RegistrationDeadline,
-                    Category = viewModel.Category,
-                    Image = viewModel.Image,
-                    IsPublic = viewModel.IsPublic,
-                    AdminId = currentUser?.Id,
-                    Admin = currentUser
-                };
+                    // Get the current user as admin
+                    var admin = await _userManager.GetUserAsync(User);
+                    if (admin == null)
+                    {
+                        ModelState.AddModelError("", "User not found");
+                        ViewBag.Categories = await GetCategories();
+                        return View(activity);
+                    }
 
-                // Add organizers
-                if (viewModel.SelectedOrganizerIds != null)
-                {
-                    var organizers = await _context.Users
-                        .Where(u => viewModel.SelectedOrganizerIds.Contains(u.Id))
-                        .ToListAsync();
-                    activity.Organisers = organizers;
+                    activity.AdminId = admin.Id;
+                    activity.Admin = admin;
+
+                    _context.Add(activity);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
 
-                _context.Add(activity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // If we got this far, something failed, log the errors
+                foreach (var modelState in ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        _logger.LogError($"Activity creation error: {error.ErrorMessage}");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error creating activity: {ex.Message}");
+                ModelState.AddModelError("", "An error occurred while creating the activity.");
             }
 
-            viewModel.AvailableOrganizers = await GetAvailableOrganizers();
-            return View(viewModel);
+            // Repopulate categories before returning
+            ViewBag.Categories = await GetCategories();
+            return View(activity);
         }
 
         // GET: Activities/Edit/5
@@ -463,6 +470,16 @@ namespace Studievereniging.Controllers
             {
                 return StatusCode(500, "Er is een fout opgetreden");
             }
+        }
+
+        private async Task<IEnumerable<SelectListItem>> GetCategories()
+        {
+            var categories = await _context.Categories.ToListAsync();
+            return categories.Select(c => new SelectListItem
+            {
+                Value = c.Name,
+                Text = c.Name
+            });
         }
 
     }
